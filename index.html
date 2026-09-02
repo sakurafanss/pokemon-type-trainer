@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>屬性相剋訓練器</title><!-- v8 compact iPhone layout -->
+<title>屬性訓練器</title><!-- v8 compact iPhone layout -->
 <meta name="theme-color" content="#0b1220">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
-<meta name="apple-mobile-web-app-title" content="屬性相剋訓練器" id="appleAppTitle">
+<meta name="apple-mobile-web-app-title" content="屬性訓練器" id="appleAppTitle">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
@@ -1208,18 +1208,351 @@
     }
   }
 
+
+  /* v10 — 背誦四範圍 + 背誦錯題重溫 + 效果提示符號 */
+  .review-kind-card{
+    padding:7px !important;
+  }
+  .review-kind-row{
+    display:grid;
+    grid-template-columns:auto 1fr 1fr;
+    align-items:center;
+    gap:5px;
+  }
+  .memory-target-cues{
+    display:flex;
+    flex-wrap:wrap;
+    gap:5px;
+    margin:2px 0 7px;
+  }
+  .effect-cue{
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    min-height:28px;
+    padding:4px 8px;
+    border-radius:999px;
+    border:1px solid rgba(255,255,255,.10);
+    background:#131c2e;
+    color:#f6f8fc;
+    font-size:10px;
+    font-weight:800;
+    line-height:1.15;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.05);
+  }
+  .effect-cue .effect-symbol{
+    font-size:14px;
+    line-height:1;
+  }
+  .effect-cue .effect-mult{
+    font-weight:900;
+    white-space:nowrap;
+  }
+  .effect-cue .effect-term{
+    color:rgba(255,255,255,.88);
+    font-weight:700;
+  }
+  .effect-cue.x4{
+    border-color:#d4a72c;
+    background:#7d6211;
+    color:#fff8de;
+  }
+  .effect-cue.x2{
+    border-color:#15a57f;
+    background:#0d6f62;
+    color:#eefef9;
+  }
+  .effect-cue.x1{
+    border-color:#7388b7;
+    background:#243558;
+    color:#eef4ff;
+  }
+  .effect-cue.xhalf{
+    border-color:#d48b15;
+    background:#8e6207;
+    color:#fff5df;
+  }
+  .effect-cue.xquarter{
+    border-color:#c85c20;
+    background:#8e3f17;
+    color:#fff0ea;
+  }
+  .effect-cue.x0{
+    border-color:#7e92be;
+    background:#182233;
+    color:#eef3fd;
+  }
+
+  .choice .choice-main{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+  }
+  .choice .choice-symbol{
+    font-size:21px;
+    line-height:1;
+  }
+  .choice .choice-term{
+    display:block;
+    margin-top:3px;
+    color:#9fb0ca;
+    font-size:9px;
+    font-weight:700;
+    line-height:1.15;
+  }
+  .choice.correct .choice-term{color:#bcecca}
+  .choice.wrong .choice-term{color:#ffc9c9}
+
+  .effect-answer-group{
+    margin-top:9px;
+  }
+  .effect-answer-group .answer-summary{
+    margin-top:5px;
+  }
+
+  .effect-row{
+    grid-template-columns:72px 1fr !important;
+  }
+  .effect-badge{
+    min-height:40px !important;
+    padding:4px 3px;
+    display:flex !important;
+    flex-direction:column;
+    gap:1px;
+    line-height:1.05;
+  }
+  .effect-badge .eb-main{
+    display:flex;
+    align-items:center;
+    gap:3px;
+    font-size:12px;
+  }
+  .effect-badge .eb-term{
+    font-size:7.5px;
+    opacity:.88;
+    font-weight:700;
+    text-align:center;
+  }
+  .effect-badge.x4{background:#8a6b13;color:#fff8d1}
+  .effect-badge.x2{background:#1f8f4a;color:#eafff1}
+  .effect-badge.x1{background:#3a4355;color:#edf2f9}
+  .effect-badge.xhalf{background:#d76224;color:#fff2e8}
+  .effect-badge.xquarter{background:#b84b1c;color:#fff0e9}
+  .effect-badge.x0{background:#0b0f18;color:#d6dce6;border:1px solid #495268}
+
+  .type-matrix td.x4{background:#a17b12;color:white}
+  .type-matrix td.x2{background:#1cab43;color:white}
+  .type-matrix td.x1{background:#f7f8fa;color:#5b6472}
+  .type-matrix td.xhalf{background:#f04b35;color:white}
+  .type-matrix td.xquarter{background:#c94720;color:white}
+  .type-matrix td.x0{background:#090c12;color:white}
+
+  .matrix-legend .effect-cue{
+    min-height:24px;
+    padding:3px 6px;
+    font-size:9px;
+  }
+  .matrix-legend .effect-cue .effect-symbol{font-size:12px}
+
+  @media (min-width:700px){
+    .review-kind-card{padding:12px !important}
+    .effect-cue{font-size:12px}
+    .effect-row{grid-template-columns:92px 1fr !important}
+    .effect-badge .eb-term{font-size:9px}
+  }
+
+
+  /* v11 — mono UI icons + memory toolbar reorder */
+  .seg button,
+  .mini-btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  .btn-ui{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:7px;
+    min-width:0;
+    width:100%;
+  }
+  .btn-ui .ui-icon{
+    width:15px;
+    height:15px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    flex:0 0 15px;
+    color:currentColor;
+    opacity:.96;
+  }
+  .btn-ui .ui-icon svg{
+    width:15px;
+    height:15px;
+    display:block;
+    stroke:currentColor;
+    fill:none;
+    stroke-width:1.9;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+    vector-effect:non-scaling-stroke;
+  }
+  .btn-ui .ui-icon svg.fill{
+    fill:currentColor;
+    stroke:none;
+  }
+  .btn-ui .ui-text{
+    min-width:0;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+
+  #memoryToolbar{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:10px;
+    align-items:start;
+  }
+  #memoryToolbar .group{
+    width:100%;
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    gap:6px;
+  }
+  #memoryToolbar .toolbar-label{
+    min-width:64px;
+  }
+  #memoryToolbar .mini-btn{
+    min-width:0;
+  }
+
+  @media (min-width:900px){
+    #memoryToolbar{
+      grid-template-columns:1fr 1fr 1fr;
+      column-gap:14px;
+      row-gap:10px;
+    }
+    #memoryToolbar .memory-group-left{
+      justify-content:flex-start;
+    }
+    #memoryToolbar .memory-group-center{
+      justify-content:center;
+    }
+    #memoryToolbar .memory-group-right{
+      justify-content:flex-end;
+    }
+  }
+
+  @media (max-width:699px){
+    .btn-ui{
+      gap:5px;
+    }
+    .btn-ui .ui-icon,
+    .btn-ui .ui-icon svg{
+      width:13px;
+      height:13px;
+      flex-basis:13px;
+    }
+    .seg button{
+      font-size:10.5px !important;
+      padding-left:4px !important;
+      padding-right:4px !important;
+    }
+    .mini-btn{
+      font-size:10px !important;
+    }
+  }
+
+
+  /* v12 — 背誦工具列固定位置：方向 → 內容 → 防守屬性，全靠左 */
+  #memoryToolbar{
+    display:flex !important;
+    flex-wrap:wrap !important;
+    justify-content:flex-start !important;
+    align-items:flex-start !important;
+    gap:8px 14px !important;
+  }
+
+  #memoryToolbar .memory-group-fixed{
+    width:auto !important;
+    display:flex !important;
+    flex:0 0 auto !important;
+    justify-content:flex-start !important;
+    align-items:center !important;
+    gap:6px !important;
+  }
+
+  #memoryToolbar .memory-group-fixed .toolbar-label{
+    min-width:auto !important;
+    margin-right:2px !important;
+    white-space:nowrap;
+  }
+
+  /* 攻擊方時保留「防守屬性」位置，但按鈕變成停用狀態，
+     因此切換至防守方時前兩組控制不會移位。 */
+  #memoryTypeGroup.memory-type-disabled{
+    opacity:.42;
+  }
+  #memoryTypeGroup.memory-type-disabled .mini-btn{
+    pointer-events:none;
+    cursor:default;
+  }
+
+  @media (max-width:699px){
+    #memoryToolbar{
+      flex-direction:column !important;
+      flex-wrap:nowrap !important;
+      gap:6px !important;
+    }
+    #memoryToolbar .memory-group-fixed{
+      width:100% !important;
+      min-height:34px;
+    }
+    #memoryToolbar .memory-group-fixed .toolbar-label{
+      width:60px !important;
+      flex:0 0 60px !important;
+      font-size:10px !important;
+    }
+    #memoryToolbar .memory-group-fixed .mini-btn{
+      flex:0 1 auto;
+    }
+  }
+
+  @media (min-width:700px){
+    #memoryToolbar{
+      flex-direction:row !important;
+    }
+  }
+
+
+  .chart-role-icon svg{
+    width:20px;
+    height:20px;
+    display:block;
+    stroke:currentColor;
+    fill:none;
+    stroke-width:1.9;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+  }
+
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="hero">
-    <h1 id="appTitle" data-i18n="appTitle">屬性相剋訓練器</h1>
+    <h1 id="appTitle" data-i18n="appTitle">屬性訓練器</h1>
     <div class="subtitle" data-i18n="subtitle">
       以手機使用為主的 Pokémon 屬性訓練器：先進行背誦，再做隨機題，最後集中重溫錯題。
     </div>
 
     <div class="language-switch" aria-label="Language">
-      <button class="lang-btn active" data-lang="zh-Hant">繁中</button>
+      <button class="lang-btn active" data-lang="zh-Hant">中文</button>
       <button class="lang-btn" data-lang="en">EN</button>
       <button class="lang-btn" data-lang="ja">日本語</button>
     </div>
@@ -1260,7 +1593,7 @@
           1. 答錯次數越多，之後在隨機出題中出現的機率越高。<br>
           2. 有錯題時，隨機模式約有 65% 機會優先抽取錯題。<br>
           3. 答對錯題後，該題會自動移出錯題題庫。<br>
-          4. 背誦模式分為「防守方弱點」及「攻擊方克制」。
+          4. 背誦答錯的題目亦會加入「錯題重溫」。
         </div>
         <div class="bottom-actions" style="margin-top:16px;justify-content:flex-start">
           <button class="secondary-btn" id="resetQuizBtn" data-i18n="resetStats">重設統計</button>
@@ -1270,10 +1603,19 @@
     </div>
   </div>
 
+
+  <div class="card hidden review-kind-card" id="reviewKindCard">
+    <div class="review-kind-row">
+      <div class="toolbar-label" data-i18n="reviewContent">錯題類型</div>
+      <button class="mini-btn active" data-review-kind="quiz" data-i18n="reviewQuiz">倍率題</button>
+      <button class="mini-btn" data-review-kind="memory" data-i18n="reviewMemory">背誦題</button>
+    </div>
+  </div>
+
   <div class="card" id="quizCard">
     <div class="toolbar">
       <div class="group">
-        <div class="toolbar-label" data-i18n="quizType">題目類型</div>
+        <div class="toolbar-label" data-i18n="quizType">屬性數量</div>
         <button class="mini-btn active" data-quiz="single" data-i18n="singleType">單屬性</button>
         <button class="mini-btn" data-quiz="dual" data-i18n="dualType">雙屬性</button>
       </div>
@@ -1313,23 +1655,35 @@
   </div>
 
   <div class="card hidden" id="memoryCard">
-    <div class="toolbar memory-toolbar">
-      <div class="group memory-direction-group">
-        <div class="toolbar-label" data-i18n="memoryDirection">背誦方向</div>
-        <button class="mini-btn active" data-memory="attack" data-i18n="attackMode">攻擊方・克制強項</button>
-        <button class="mini-btn" data-memory="defense" data-i18n="defenseMode">防守方・屬性弱點</button>
+    <div class="toolbar memory-toolbar" id="memoryToolbar">
+      <div class="group memory-direction-group memory-group-fixed">
+        <div class="toolbar-label" data-i18n="memoryDirection">對戰陣營</div>
+        <button class="mini-btn active" data-memory="attack" data-i18n="attackMode">攻擊方</button>
+        <button class="mini-btn" data-memory="defense" data-i18n="defenseMode">防守方</button>
       </div>
 
-      <div class="group hidden" id="memoryTypeGroup">
-        <div class="toolbar-label" data-i18n="defenseTyping">防守屬性</div>
+      <div class="group memory-group-fixed" id="memoryEffectGroup">
+        <div class="toolbar-label" data-i18n="memoryEffect">屬性相剋</div>
+        <button class="mini-btn active" id="memoryTarget2" data-memory-target="2">效果較佳 2×</button>
+        <button class="mini-btn" id="memoryTargetHalf" data-memory-target="0.5">效果不佳 0.5×</button>
+      </div>
+
+      <div class="group memory-group-fixed" id="memoryTypeGroup">
+        <div class="toolbar-label" data-i18n="defenseTyping">屬性數量</div>
         <button class="mini-btn active" data-memory-type="single" data-i18n="singleType">單屬性</button>
         <button class="mini-btn" data-memory-type="dual" data-i18n="dualType">雙屬性</button>
       </div>
     </div>
 
-    <div class="memory-layout">
+    <div id="memoryReviewEmpty" class="empty hidden">
+      <span data-i18n="memoryReviewEmpty1">目前沒有背誦錯題可供重溫。</span><br>
+      <span data-i18n="memoryReviewEmpty2">先到「背誦模式」練習，答錯的題目會自動加入這裡。</span>
+    </div>
+
+    <div class="memory-layout" id="memoryLayout">
       <div class="memory-focus">
         <div class="memory-title" id="memoryTitle">防守方模式</div>
+        <div class="memory-target-cues" id="memoryTargetCue"></div>
         <div class="question-row memory-focus-row">
           <span class="type-pill" id="focusTypePill"></span>
           <span class="plus hidden" id="memoryPlusSign">＋</span>
@@ -1374,7 +1728,9 @@
     <div class="chart-columns">
       <section class="chart-section">
         <div class="chart-section-title">
-          <span class="chart-role-icon">⚔</span>
+          <span class="chart-role-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="m14 4 6 6"/><path d="m13 5 2-2 6 6-2 2"/><path d="M5 19 14 10"/><path d="m8 21-5-5"/><path d="m6 18 3 3"/><path d="M4 20 2.5 21.5"/></svg>
+          </span>
           <div>
             <b data-i18n="attacker">攻擊方</b>
             <small data-i18n="useThisTypeToAttack">使用這個屬性攻擊</small>
@@ -1385,7 +1741,9 @@
 
       <section class="chart-section">
         <div class="chart-section-title">
-          <span class="chart-role-icon">🛡</span>
+          <span class="chart-role-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M12 3 19 6v5c0 4.8-2.7 7.8-7 10-4.3-2.2-7-5.2-7-10V6l7-3Z"/></svg>
+          </span>
           <div>
             <b data-i18n="defender">防守方</b>
             <small data-i18n="thisTypeDefends">這個屬性受到攻擊</small>
@@ -1397,12 +1755,7 @@
 
     <details class="matrix-details">
       <summary data-i18n="showFullChart">查看完整 18×18 相剋表</summary>
-      <div class="matrix-legend">
-        <span><i class="legend-swatch x2"></i>2×</span>
-        <span><i class="legend-swatch xhalf"></i>½×</span>
-        <span><i class="legend-swatch x0"></i>0×</span>
-        <span data-i18n="blankIsNeutral">空白 = 1×</span>
-      </div>
+      <div class="matrix-legend" id="matrixLegend"></div>
       <div class="matrix-wrap">
         <table class="type-matrix" id="typeMatrix"></table>
       </div>
@@ -1436,15 +1789,15 @@ const TYPE_NAMES = {
 
 const I18N = {
   "zh-Hant":{
-    appTitle:"屬性相剋訓練器",
+    appTitle:"屬性訓練器",
     subtitle:"以手機使用為主的 Pokémon 屬性訓練器：先進行背誦，再做隨機題，最後集中重溫錯題。",
     modeMemory:"背誦模式", modeQuiz:"隨機出題", modeReview:"錯題重溫", modeChart:"相剋表",
     statCorrect:"答對", statTotal:"總題數", statStreak:"連勝", statAccuracy:"命中率", statWrong:"錯題數",
     memoryStats:"背誦統計", quizStats:"答題統計", reviewStats:"重溫統計",
     tools:"工具", resetStats:"重設統計", clearWrong:"清空錯題",
-    quizType:"題目類型", singleType:"單屬性", dualType:"雙屬性", nextQuestion:"下一題",
-    memoryDirection:"背誦方向", attackMode:"攻擊方・克制強項", defenseMode:"防守方・屬性弱點",
-    defenseTyping:"防守屬性", revealAnswer:"揭曉答案", nextCard:"下一張",
+    quizType:"屬性數量", singleType:"單屬性", dualType:"雙屬性", nextQuestion:"下一題",
+    memoryDirection:"對戰陣營", attackMode:"攻擊方・克制強項", defenseMode:"防守方・屬性弱點",
+    defenseTyping:"屬性數量", revealAnswer:"揭曉答案", nextCard:"下一張",
     reviewEmpty1:"目前這個題型沒有錯題可供重溫。",
     reviewEmpty2:"你可以先到「隨機出題」練習數題，或切換至另一個題型。",
     chartKicker:"TYPE CHART", chartTitle:"屬性相剋表",
@@ -1475,10 +1828,10 @@ const I18N = {
     confirmReset:"確定要重設所有統計？", confirmClearWrong:"確定要清空錯題題庫？",
     quizLegend:'單屬性答案：0× / 0.5× / 1× / 2×。<br>雙屬性答案：0× / 0.25× / 0.5× / 1× / 2× / 4×。<br>提示：雙屬性需要將兩個倍率相乘。',
     memoryLegend:'攻擊方模式：選出「這個攻擊屬性可對哪些防守屬性造成 2× 傷害」。<br>防守方單屬性：選出所有 2× 弱點。<br>防守方雙屬性：選出所有實際弱點，包括 2× 及 4×；兩個屬性的倍率可能互相抵銷。',
-    toolNote:'1. 答錯次數越多，之後在隨機出題中出現的機率越高。<br>2. 有錯題時，隨機模式約有 65% 機會優先抽取錯題。<br>3. 答對錯題後，該題會自動移出錯題題庫。<br>4. 背誦模式分為「防守方弱點」及「攻擊方克制」。'
+    toolNote:'1. 答錯次數越多，之後在隨機出題中出現的機率越高。<br>2. 有錯題時，隨機模式約有 65% 機會優先抽取錯題。<br>3. 答對錯題後，該題會自動移出錯題題庫。<br>4. 背誦答錯的題目亦會加入「錯題重溫」。'
   },
   "en":{
-    appTitle:"Type Matchup Trainer",
+    appTitle:"Type Trainer",
     subtitle:"A mobile-first Pokémon type trainer: memorize first, practice random questions, then review mistakes.",
     modeMemory:"Memorize", modeQuiz:"Random Quiz", modeReview:"Mistake Review", modeChart:"Type Chart",
     statCorrect:"Correct", statTotal:"Total", statStreak:"Streak", statAccuracy:"Accuracy", statWrong:"Mistakes",
@@ -1517,8 +1870,8 @@ const I18N = {
     toolNote:'1. Questions you miss more often are weighted more heavily in Random Quiz.<br>2. When mistakes exist, Random Quiz has about a 65% chance to draw from them first.<br>3. Correctly answering a mistake removes it from the review list.<br>4. Memorize mode separates attacker strengths from defender weaknesses.'
   },
   "ja":{
-    appTitle:"タイプ相性トレーナー",
-    subtitle:"スマホ向けのポケモンタイプ相性トレーナー。暗記 → ランダム問題 → 間違い復習の順で練習できます。",
+    appTitle:"タイプトレーナー",
+    subtitle:"スマホ向けのポケモンタイプトレーナー。暗記 → ランダム問題 → 間違い復習の順で練習できます。",
     modeMemory:"暗記", modeQuiz:"ランダム問題", modeReview:"間違い復習", modeChart:"相性表",
     statCorrect:"正解", statTotal:"問題数", statStreak:"連続正解", statAccuracy:"正答率", statWrong:"間違い",
     memoryStats:"暗記の記録", quizStats:"問題の記録", reviewStats:"復習の記録",
@@ -1557,6 +1910,166 @@ const I18N = {
   }
 };
 
+
+const EXT_I18N = {
+  "zh-Hant":{
+    memoryDirection:"對戰陣營",
+    attackMode:"攻擊方",
+    defenseMode:"防守方",
+    memoryEffect:"屬性相剋",
+    attackGood:"效果較佳 2×",
+    attackBad:"效果不佳 0.5×",
+    defenseWeak:"弱點 2×",
+    defenseResist:"抵抗 0.5×",
+    reviewContent:"錯題類型",
+    reviewQuiz:"倍率題",
+    reviewMemory:"背誦題",
+    memoryReviewEmpty1:"目前沒有背誦錯題可供重溫。",
+    memoryReviewEmpty2:"先到「背誦模式」練習，答錯的題目會自動加入這裡。",
+    attackGoodTitle:"攻擊方・效果較佳",
+    attackBadTitle:"攻擊方・效果不佳",
+    defenseWeakSingleTitle:"防守方・單屬性弱點",
+    defenseWeakDualTitle:"防守方・雙屬性弱點",
+    defenseResistSingleTitle:"防守方・單屬性抵抗",
+    defenseResistDualTitle:"防守方・雙屬性抵抗",
+    attackGoodPrompt:(t)=>`請選出所有會被「${t}」攻擊造成 2× 傷害的防守屬性。`,
+    attackBadPrompt:(t)=>`請選出所有只會被「${t}」攻擊造成 0.5× 傷害的防守屬性。`,
+    defenseWeakSinglePrompt:(t)=>`請選出所有會對「${t}」造成 2× 傷害的攻擊屬性。`,
+    defenseWeakDualPrompt:(a,b)=>`請選出所有攻擊「${a}＋${b}」時會造成 2× 或 4× 傷害的攻擊屬性。`,
+    defenseResistSinglePrompt:(t)=>`請選出所有攻擊「${t}」時只會造成 0.5× 傷害的攻擊屬性。`,
+    defenseResistDualPrompt:(a,b)=>`請選出所有攻擊「${a}＋${b}」時只會造成 0.5× 或 0.25× 傷害的攻擊屬性。`,
+    attackGoodDesc:(t)=>`「${t}」作為攻擊方，效果較佳的防守屬性：`,
+    attackBadDesc:(t)=>`「${t}」作為攻擊方，效果不佳的防守屬性：`,
+    defenseWeakDesc:(types)=>`「${types}」作為防守方的弱點：`,
+    defenseResistDesc:(types)=>`「${types}」作為防守方可抵抗的攻擊屬性：`,
+    memoryAddedWrong:"已加入背誦錯題重溫。",
+    memoryKeepWrong:"這題仍會保留在背誦錯題重溫。",
+    memoryRemovedWrong:"已從背誦錯題重溫移除。",
+    memoryLegend:'攻擊方可練習「效果較佳 2×」及「效果不佳 0.5×」。<br>防守方可練習「弱點 2×」及「抵抗 0.5×」；雙屬性會同時計算 4× / 2× 或 0.5× / 0.25×。',
+    quizLegend:'★ 4×　◎ 2×　◯ 1×　△ 0.5×　▼ 0.25×　☓ 0×'
+  },
+  "en":{
+    memoryDirection:"Study direction",
+    attackMode:"Attacker",
+    defenseMode:"Defender",
+    memoryEffect:"Study focus",
+    attackGood:"Strong 2×",
+    attackBad:"Not very effective 0.5×",
+    defenseWeak:"Weakness 2×",
+    defenseResist:"Resistance 0.5×",
+    reviewContent:"Review type",
+    reviewQuiz:"Multiplier",
+    reviewMemory:"Memorize",
+    memoryReviewEmpty1:"There are no memorization mistakes to review.",
+    memoryReviewEmpty2:"Practice in Memorize mode first; missed cards will appear here automatically.",
+    attackGoodTitle:"Attacker · Strong matchups",
+    attackBadTitle:"Attacker · Poor matchups",
+    defenseWeakSingleTitle:"Defender · Single-type weaknesses",
+    defenseWeakDualTitle:"Defender · Dual-type weaknesses",
+    defenseResistSingleTitle:"Defender · Single-type resistances",
+    defenseResistDualTitle:"Defender · Dual-type resistances",
+    attackGoodPrompt:(t)=>`Select every defending type that takes 2× damage from ${t}.`,
+    attackBadPrompt:(t)=>`Select every defending type that takes only 0.5× damage from ${t}.`,
+    defenseWeakSinglePrompt:(t)=>`Select every attacking type that deals 2× damage to ${t}.`,
+    defenseWeakDualPrompt:(a,b)=>`Select every attacking type that deals 2× or 4× damage to ${a} + ${b}.`,
+    defenseResistSinglePrompt:(t)=>`Select every attacking type that deals only 0.5× damage to ${t}.`,
+    defenseResistDualPrompt:(a,b)=>`Select every attacking type that deals only 0.5× or 0.25× damage to ${a} + ${b}.`,
+    attackGoodDesc:(t)=>`${t} is super effective against:`,
+    attackBadDesc:(t)=>`${t} is not very effective against:`,
+    defenseWeakDesc:(types)=>`Weaknesses of ${types}:`,
+    defenseResistDesc:(types)=>`Attacks resisted by ${types}:`,
+    memoryAddedWrong:"Added to Memorize Mistake Review.",
+    memoryKeepWrong:"This card stays in Memorize Mistake Review.",
+    memoryRemovedWrong:"Removed from Memorize Mistake Review.",
+    memoryLegend:'Attacker practice includes “Strong 2×” and “Not very effective 0.5×”.<br>Defender practice includes “Weakness 2×” and “Resistance 0.5×”; dual types also calculate 4× / 2× or 0.5× / 0.25×.',
+    quizLegend:'★ 4×　◎ 2×　◯ 1×　△ 0.5×　▼ 0.25×　☓ 0×'
+  },
+  "ja":{
+    memoryDirection:"暗記方向",
+    attackMode:"攻撃側",
+    defenseMode:"防御側",
+    memoryEffect:"暗記内容",
+    attackGood:"効果抜群 2×",
+    attackBad:"いまひとつ 0.5×",
+    defenseWeak:"弱点 2×",
+    defenseResist:"耐性 0.5×",
+    reviewContent:"復習タイプ",
+    reviewQuiz:"倍率問題",
+    reviewMemory:"暗記問題",
+    memoryReviewEmpty1:"復習する暗記ミスはありません。",
+    memoryReviewEmpty2:"先に暗記モードで練習してください。間違えた問題は自動的にここへ追加されます。",
+    attackGoodTitle:"攻撃側・効果抜群",
+    attackBadTitle:"攻撃側・いまひとつ",
+    defenseWeakSingleTitle:"防御側・単タイプの弱点",
+    defenseWeakDualTitle:"防御側・複合タイプの弱点",
+    defenseResistSingleTitle:"防御側・単タイプの耐性",
+    defenseResistDualTitle:"防御側・複合タイプの耐性",
+    attackGoodPrompt:(t)=>`${t}タイプの攻撃が2×になる防御タイプをすべて選んでください。`,
+    attackBadPrompt:(t)=>`${t}タイプの攻撃が0.5×になる防御タイプをすべて選んでください。`,
+    defenseWeakSinglePrompt:(t)=>`${t}タイプに2×ダメージを与える攻撃タイプをすべて選んでください。`,
+    defenseWeakDualPrompt:(a,b)=>`${a}＋${b}に2×または4×ダメージを与える攻撃タイプをすべて選んでください。`,
+    defenseResistSinglePrompt:(t)=>`${t}タイプに0.5×ダメージしか与えられない攻撃タイプをすべて選んでください。`,
+    defenseResistDualPrompt:(a,b)=>`${a}＋${b}に0.5×または0.25×ダメージしか与えられない攻撃タイプをすべて選んでください。`,
+    attackGoodDesc:(t)=>`${t}タイプの攻撃が効果抜群になる防御タイプ：`,
+    attackBadDesc:(t)=>`${t}タイプの攻撃がいまひとつになる防御タイプ：`,
+    defenseWeakDesc:(types)=>`${types}の弱点：`,
+    defenseResistDesc:(types)=>`${types}が耐性を持つ攻撃タイプ：`,
+    memoryAddedWrong:"暗記の間違い復習に追加しました。",
+    memoryKeepWrong:"この問題は暗記の間違い復習に残ります。",
+    memoryRemovedWrong:"暗記の間違い復習から削除しました。",
+    memoryLegend:'攻撃側は「効果抜群 2×」と「いまひとつ 0.5×」を練習できます。<br>防御側は「弱点 2×」と「耐性 0.5×」を練習でき、複合タイプでは4× / 2×、0.5× / 0.25×も計算します。',
+    quizLegend:'★ 4×　◎ 2×　◯ 1×　△ 0.5×　▼ 0.25×　☓ 0×'
+  }
+};
+
+const EFFECT_TERMS = {
+  "4":    {symbol:"★", "zh-Hant":"效果無比絕佳", "ja":"こうかちょうバツグン", "en":"Extremely effective"},
+  "2":    {symbol:"◎", "zh-Hant":"效果絕佳",     "ja":"こうかバツグン",     "en":"Super effective"},
+  "1":    {symbol:"◯", "zh-Hant":"有效果",       "ja":"こうかあり",         "en":"Effective"},
+  "0.5":  {symbol:"△", "zh-Hant":"效果不好",     "ja":"いまひとつ",         "en":"Not very effective"},
+  "0.25": {symbol:"▼", "zh-Hant":"效果相當不好", "ja":"かなりいまひとつ",   "en":"Mostly ineffective"},
+  "0":    {symbol:"☓", "zh-Hant":"沒有效果",     "ja":"こうかなし",         "en":"Has no effect"}
+};
+
+
+const UI_ICONS = {
+  book:`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 5.5A2.5 2.5 0 0 1 7 3h10v16H7a2.5 2.5 0 0 0-2.5 2.5V5.5Z"/><path d="M17 3h1.5A1.5 1.5 0 0 1 20 4.5V19"/><path d="M7 19a2.5 2.5 0 0 0-2.5 2.5"/><path d="M8.5 7H15"/><path d="M8.5 10H15"/></svg>`,
+  random:`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h4c1.5 0 2.4.4 3.3 1.7l5.4 7.6c.9 1.3 1.8 1.7 3.3 1.7H20"/><path d="m17 5 3 2-3 2"/><path d="M4 17h4c1.4 0 2.2-.3 3-1.4"/><path d="M14.5 9.8c.8-1.1 1.6-1.8 3.5-1.8H20"/><path d="m17 15 3 2-3 2"/></svg>`,
+  wrong:`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.2 9.2 14.8 14.8"/><path d="M14.8 9.2 9.2 14.8"/><circle cx="12" cy="12" r="8"/></svg>`,
+  chart:`<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 9h16"/><path d="M9 4v16"/><path d="M14 4v16"/></svg>`,
+  single:`<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="7.5"/></svg>`,
+  dual:`<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="12" r="5.5"/><circle cx="15" cy="12" r="5.5"/></svg>`,
+  sword:`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 4 6 6"/><path d="m13 5 2-2 6 6-2 2"/><path d="M5 19 14 10"/><path d="m8 21-5-5"/><path d="m6 18 3 3"/><path d="M4 20 2.5 21.5"/></svg>`,
+  shield:`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 19 6v5c0 4.8-2.7 7.8-7 10-4.3-2.2-7-5.2-7-10V6l7-3Z"/></svg>`
+};
+
+function uiLabel(iconKey, text){
+  const icon = UI_ICONS[iconKey] || "";
+  return `<span class="btn-ui"><span class="ui-icon">${icon}</span><span class="ui-text">${text}</span></span>`;
+}
+
+function setButtonWithIcon(selector, iconKey, label){
+  const nodes = document.querySelectorAll(selector);
+  nodes.forEach(node => {
+    node.innerHTML = uiLabel(iconKey, label);
+  });
+}
+
+function renderDecoratedLabels(){
+  setButtonWithIcon('[data-main="memory"]', 'book', tr('modeMemory'));
+  setButtonWithIcon('[data-main="quiz"]', 'random', tr('modeQuiz'));
+  setButtonWithIcon('[data-main="review"]', 'wrong', tr('modeReview'));
+  setButtonWithIcon('[data-main="chart"]', 'chart', tr('modeChart'));
+
+  setButtonWithIcon('[data-memory="attack"]', 'sword', tr('attackMode'));
+  setButtonWithIcon('[data-memory="defense"]', 'shield', tr('defenseMode'));
+
+  setButtonWithIcon('[data-quiz="single"]', 'single', tr('singleType'));
+  setButtonWithIcon('[data-quiz="dual"]', 'dual', tr('dualType'));
+  setButtonWithIcon('[data-memory-type="single"]', 'single', tr('singleType'));
+  setButtonWithIcon('[data-memory-type="dual"]', 'dual', tr('dualType'));
+}
+
 let currentLang = localStorage.getItem(LANG_KEY) || (() => {
   const lang = (navigator.language || "").toLowerCase();
   if (lang.startsWith("ja")) return "ja";
@@ -1565,8 +2078,14 @@ let currentLang = localStorage.getItem(LANG_KEY) || (() => {
 })();
 
 function tr(key){
+  if (EXT_I18N[currentLang] && Object.prototype.hasOwnProperty.call(EXT_I18N[currentLang], key)) {
+    return EXT_I18N[currentLang][key];
+  }
   if (I18N[currentLang] && Object.prototype.hasOwnProperty.call(I18N[currentLang], key)) {
     return I18N[currentLang][key];
+  }
+  if (EXT_I18N["zh-Hant"] && Object.prototype.hasOwnProperty.call(EXT_I18N["zh-Hant"], key)) {
+    return EXT_I18N["zh-Hant"][key];
   }
   if (I18N["zh-Hant"] && Object.prototype.hasOwnProperty.call(I18N["zh-Hant"], key)) {
     return I18N["zh-Hant"][key];
@@ -1620,7 +2139,9 @@ let state = loadState();
 let mainMode = "memory";
 let quizMode = "single";
 let memoryMode = "attack";
+let memoryTargetMultiplier = 2;
 let memoryDefenseTypeMode = "single";
+let reviewKind = "quiz";
 let currentQuiz = null;
 let quizAnswered = false;
 let currentMemoryTypes = [];
@@ -1631,7 +2152,9 @@ let chartType = "一般";
 const mainModeButtons = [...document.querySelectorAll("#mainModeSeg button")];
 const quizModeButtons = [...document.querySelectorAll("[data-quiz]")];
 const memoryModeButtons = [...document.querySelectorAll("[data-memory]")];
+const memoryTargetButtons = [...document.querySelectorAll("[data-memory-target]")];
 const memoryTypeButtons = [...document.querySelectorAll("[data-memory-type]")];
+const reviewKindButtons = [...document.querySelectorAll("[data-review-kind]")];
 
 const els = {
   quizCard: document.getElementById("quizCard"),
@@ -1656,7 +2179,14 @@ const els = {
   focusTypePill: document.getElementById("focusTypePill"),
   focusTypePill2: document.getElementById("focusTypePill2"),
   memoryPlusSign: document.getElementById("memoryPlusSign"),
+  memoryToolbar: document.getElementById("memoryToolbar"),
+  memoryEffectGroup: document.getElementById("memoryEffectGroup"),
   memoryTypeGroup: document.getElementById("memoryTypeGroup"),
+  memoryTarget2: document.getElementById("memoryTarget2"),
+  memoryTargetHalf: document.getElementById("memoryTargetHalf"),
+  memoryTargetCue: document.getElementById("memoryTargetCue"),
+  memoryReviewEmpty: document.getElementById("memoryReviewEmpty"),
+  memoryLayout: document.getElementById("memoryLayout"),
   memoryPrompt: document.getElementById("memoryPrompt"),
   memoryGrid: document.getElementById("memoryGrid"),
   memoryFeedback: document.getElementById("memoryFeedback"),
@@ -1669,6 +2199,8 @@ const els = {
   chartDefenseGroups: document.getElementById("chartDefenseGroups"),
   typeMatrix: document.getElementById("typeMatrix"),
   dashboardGrid: document.getElementById("dashboardGrid"),
+  reviewKindCard: document.getElementById("reviewKindCard"),
+  matrixLegend: document.getElementById("matrixLegend"),
   quizLegend: document.getElementById("quizLegend"),
   memoryLegend: document.getElementById("memoryLegend"),
   toolNote: document.getElementById("toolNote")
@@ -1693,10 +2225,14 @@ function applyLanguage(){
   els.memoryLegend.innerHTML = tr("memoryLegend");
   els.toolNote.innerHTML = tr("toolNote");
 
+  renderMemoryControls();
+  renderDecoratedLabels();
+  renderReviewKindControls();
   renderStats();
 
   if (mainMode === "memory") startMemoryQuestion();
   else if (mainMode === "chart") renderTypeChart();
+  else if (mainMode === "review" && reviewKind === "memory") startMemoryQuestion();
   else startQuizQuestion();
 }
 
@@ -1715,16 +2251,26 @@ function loadState(){
       memoryStats: raw.memoryStats || {correct:0,total:0,streak:0},
       wrongQuestions: Array.isArray(raw.wrongQuestions)
         ? raw.wrongQuestions.map(q => ({...q, misses: Math.max(1, Number(q.misses) || 1)}))
+        : [],
+      wrongMemoryQuestions: Array.isArray(raw.wrongMemoryQuestions)
+        ? raw.wrongMemoryQuestions.map(q => ({
+            ...q,
+            target: Number(q.target) || 2,
+            types: Array.isArray(q.types) ? q.types : [],
+            misses: Math.max(1, Number(q.misses) || 1)
+          }))
         : []
     };
   }catch(e){
     return {
       quizStats:{correct:0,total:0,streak:0},
       memoryStats:{correct:0,total:0,streak:0},
-      wrongQuestions:[]
+      wrongQuestions:[],
+      wrongMemoryQuestions:[]
     };
   }
 }
+
 function saveState(){
   localStorage.setItem(STORE_KEY, JSON.stringify(state));
 }
@@ -1732,10 +2278,39 @@ function rand(arr){
   return arr[Math.floor(Math.random()*arr.length)];
 }
 function formatMult(n){
-  if (n === 0.25) return "¼×";
-  if (n === 0.5) return "½×";
+  if (n === 0.25) return "0.25×";
+  if (n === 0.5) return "0.5×";
   return n + "×";
 }
+
+function effectKey(n){
+  return String(Number(n));
+}
+
+function effectInfo(n){
+  const key = effectKey(n);
+  return EFFECT_TERMS[key] || {symbol:"", "zh-Hant":"", "ja":"", "en":""};
+}
+
+function effectTerm(n){
+  const info = effectInfo(n);
+  return info[currentLang] || info["zh-Hant"] || "";
+}
+
+function effectClass(n){
+  if (n === 4) return "x4";
+  if (n === 2) return "x2";
+  if (n === 1) return "x1";
+  if (n === 0.5) return "xhalf";
+  if (n === 0.25) return "xquarter";
+  return "x0";
+}
+
+function effectCueHTML(n){
+  const info = effectInfo(n);
+  return `<span class="effect-cue ${effectClass(n)}"><span class="effect-symbol">${info.symbol}</span><span class="effect-mult">${formatMult(n)}</span><span class="effect-term">${effectTerm(n)}</span></span>`;
+}
+
 function eff(attack, defend){
   const row = CHART[attack] || {};
   if ((row.zero || []).includes(defend)) return 0;
@@ -1780,6 +2355,56 @@ function removeWrongQuestion(q){
   if (state.wrongQuestions.length !== before) saveState();
 }
 
+
+function canonicalMemoryTypes(types){
+  return [...types].sort((a,b) => TYPES.indexOf(a) - TYPES.indexOf(b));
+}
+
+function memoryQuestionKey(q){
+  const types = canonicalMemoryTypes(q.types || []);
+  return `${q.direction}|${Number(q.target)}|${q.typing || "single"}|${types.join("+")}`;
+}
+
+function memoryQuestionSnapshot(){
+  return {
+    direction: memoryMode,
+    target: Number(memoryTargetMultiplier),
+    typing: memoryMode === "defense" ? memoryDefenseTypeMode : "single",
+    types: [...currentMemoryTypes]
+  };
+}
+
+function addWrongMemoryQuestion(q){
+  const key = memoryQuestionKey(q);
+  const existing = state.wrongMemoryQuestions.find(item => memoryQuestionKey(item) === key);
+  if (existing){
+    existing.misses = Math.max(1, Number(existing.misses) || 1) + 1;
+  } else {
+    state.wrongMemoryQuestions.push({
+      direction:q.direction,
+      target:Number(q.target),
+      typing:q.typing || "single",
+      types:[...(q.types || [])],
+      misses:1
+    });
+  }
+  saveState();
+}
+
+function removeWrongMemoryQuestion(q){
+  const key = memoryQuestionKey(q);
+  const before = state.wrongMemoryQuestions.length;
+  state.wrongMemoryQuestions = state.wrongMemoryQuestions.filter(item => memoryQuestionKey(item) !== key);
+  if (state.wrongMemoryQuestions.length !== before) saveState();
+}
+
+function makeMemoryReviewQuestion(){
+  if (!state.wrongMemoryQuestions.length) return null;
+  return weightedWrongPick(state.wrongMemoryQuestions);
+}
+
+
+
 function weightedWrongPick(pool){
   if (!pool.length) return null;
   const weights = pool.map(q => Math.max(1, Number(q.misses) || 1));
@@ -1823,61 +2448,134 @@ function renderStats(){
   if (mainMode === "chart"){
     return;
   }
-  if (mainMode === "memory"){
+
+  if (mainMode === "memory" || (mainMode === "review" && reviewKind === "memory")){
     const s = state.memoryStats;
-    els.statsTitle.textContent = tr("memoryStats");
+    els.statsTitle.textContent = mainMode === "review" ? tr("reviewStats") : tr("memoryStats");
     els.statCorrect.textContent = s.correct;
     els.statTotal.textContent = s.total;
     els.statStreak.textContent = s.streak;
-    els.stat4Label.textContent = tr("statAccuracy");
-    els.stat4Value.textContent = s.total ? Math.round((s.correct / s.total) * 100) + "%" : "—";
-  }else{
-    const s = state.quizStats;
-    els.statsTitle.textContent = mainMode === "review" ? tr("reviewStats") : tr("quizStats");
-    els.statCorrect.textContent = s.correct;
-    els.statTotal.textContent = s.total;
-    els.statStreak.textContent = s.streak;
-    els.stat4Label.textContent = tr("statWrong");
-    els.stat4Value.textContent = state.wrongQuestions.length;
+    if (mainMode === "review"){
+      els.stat4Label.textContent = tr("statWrong");
+      els.stat4Value.textContent = state.wrongMemoryQuestions.length;
+    } else {
+      els.stat4Label.textContent = tr("statAccuracy");
+      els.stat4Value.textContent = s.total ? Math.round((s.correct / s.total) * 100) + "%" : "—";
+    }
+    return;
   }
+
+  const s = state.quizStats;
+  els.statsTitle.textContent = mainMode === "review" ? tr("reviewStats") : tr("quizStats");
+  els.statCorrect.textContent = s.correct;
+  els.statTotal.textContent = s.total;
+  els.statStreak.textContent = s.streak;
+  els.stat4Label.textContent = tr("statWrong");
+  els.stat4Value.textContent = state.wrongQuestions.length;
 }
 
 function switchMainMode(mode){
   mainMode = mode;
   activateButtons(mainModeButtons, mainMode, "main");
 
-  els.quizCard.classList.toggle("hidden", mode === "memory" || mode === "chart");
-  els.memoryCard.classList.toggle("hidden", mode !== "memory");
+  els.reviewKindCard.classList.toggle("hidden", mode !== "review");
   els.chartCard.classList.toggle("hidden", mode !== "chart");
   els.dashboardGrid.classList.toggle("hidden", mode === "chart");
 
-  renderStats();
-
   if (mode === "memory"){
+    els.quizCard.classList.add("hidden");
+    els.memoryCard.classList.remove("hidden");
+    els.memoryToolbar.classList.remove("hidden");
     startMemoryQuestion();
-  } else if (mode === "chart"){
-    renderTypeChart();
-  } else {
+  } else if (mode === "quiz"){
+    els.quizCard.classList.remove("hidden");
+    els.memoryCard.classList.add("hidden");
     startQuizQuestion();
+  } else if (mode === "review"){
+    switchReviewKind(reviewKind, false);
+  } else if (mode === "chart"){
+    els.quizCard.classList.add("hidden");
+    els.memoryCard.classList.add("hidden");
+    renderTypeChart();
   }
+
+  renderStats();
 }
+
+function renderReviewKindControls(){
+  activateButtons(reviewKindButtons, reviewKind, "reviewKind");
+}
+
+function switchReviewKind(kind, rerender=true){
+  reviewKind = kind;
+  renderReviewKindControls();
+
+  const memoryReview = mainMode === "review" && reviewKind === "memory";
+  els.quizCard.classList.toggle("hidden", memoryReview);
+  els.memoryCard.classList.toggle("hidden", !memoryReview);
+  els.memoryToolbar.classList.toggle("hidden", memoryReview);
+
+  if (mainMode === "review" && rerender){
+    if (memoryReview) startMemoryQuestion();
+    else startQuizQuestion();
+  } else if (mainMode === "review"){
+    if (memoryReview) startMemoryQuestion();
+    else startQuizQuestion();
+  }
+  renderStats();
+}
+
 function switchQuizMode(mode){
   quizMode = mode;
   activateButtons(quizModeButtons, quizMode, "quiz");
-  if (mainMode !== "memory"){
+  if (mainMode === "quiz" || (mainMode === "review" && reviewKind === "quiz")){
     startQuizQuestion();
   }
 }
+
 function switchMemoryMode(mode){
   memoryMode = mode;
   activateButtons(memoryModeButtons, memoryMode, "memory");
-  els.memoryTypeGroup.classList.toggle("hidden", memoryMode !== "defense");
+  renderMemoryControls();
+  if (mainMode === "memory"){
+    startMemoryQuestion();
+  }
+}
+
+function renderMemoryControls(){
+  activateButtons(memoryModeButtons, memoryMode, "memory");
+  activateButtons(memoryTargetButtons, String(memoryTargetMultiplier), "memoryTarget");
+
+  const defenseEnabled = memoryMode === "defense";
+  els.memoryTypeGroup.classList.remove("hidden");
+  els.memoryTypeGroup.classList.toggle("memory-type-disabled", !defenseEnabled);
+
+  memoryTypeButtons.forEach(btn => {
+    btn.disabled = !defenseEnabled;
+    btn.setAttribute("aria-disabled", defenseEnabled ? "false" : "true");
+  });
+
+  if (memoryMode === "attack"){
+    els.memoryTarget2.textContent = tr("attackGood");
+    els.memoryTargetHalf.textContent = tr("attackBad");
+  } else {
+    els.memoryTarget2.textContent = tr("defenseWeak");
+    els.memoryTargetHalf.textContent = tr("defenseResist");
+  }
+
+  renderDecoratedLabels();
+}
+
+function switchMemoryTarget(value){
+  memoryTargetMultiplier = Number(value);
+  renderMemoryControls();
   if (mainMode === "memory"){
     startMemoryQuestion();
   }
 }
 
 function switchMemoryTypeMode(mode){
+  if (memoryMode !== "defense") return;
   memoryDefenseTypeMode = mode;
   activateButtons(memoryTypeButtons, memoryDefenseTypeMode, "memoryType");
   if (mainMode === "memory" && memoryMode === "defense"){
@@ -1962,8 +2660,15 @@ function renderQuizChoices(){
 
   choices.forEach(value => {
     const btn = document.createElement("button");
+    const info = effectInfo(value);
     btn.className = "choice";
-    btn.textContent = formatMult(value);
+    btn.innerHTML = `
+      <span class="choice-main">
+        <span class="choice-symbol">${info.symbol}</span>
+        <span>${formatMult(value)}</span>
+      </span>
+      <span class="choice-term">${effectTerm(value)}</span>
+    `;
     btn.dataset.value = value;
     btn.addEventListener("click", () => answerQuiz(value, btn));
     els.choices.appendChild(btn);
@@ -2004,16 +2709,17 @@ function answerQuiz(value, btn){
 
   const a = typeName(currentQuiz.attack);
   const d1 = typeName(currentQuiz.def1);
+  const resultCue = `<div style="margin-top:8px">${effectCueHTML(currentQuiz.result)}</div>`;
 
   if (currentQuiz.mode === "single"){
     els.quizFeedback.innerHTML = isCorrect
-      ? `${tr("correct")} <b>${a}</b> → <b>${d1}</b> = <b>${formatMult(currentQuiz.result)}</b>${extra}`
-      : `${tr("answerIs")}: <b>${formatMult(currentQuiz.result)}</b> — <b>${a}</b> → <b>${d1}</b>${extra}`;
+      ? `${tr("correct")} <b>${a}</b> → <b>${d1}</b> = <b>${formatMult(currentQuiz.result)}</b>${resultCue}${extra}`
+      : `${tr("answerIs")}: <b>${formatMult(currentQuiz.result)}</b> — <b>${a}</b> → <b>${d1}</b>${resultCue}${extra}`;
   } else {
     const d2 = typeName(currentQuiz.def2);
     els.quizFeedback.innerHTML = isCorrect
-      ? `${tr("correct")} <b>${a}</b> → <b>${d1}</b> = ${formatMult(currentQuiz.e1)}, <b>${a}</b> → <b>${d2}</b> = ${formatMult(currentQuiz.e2)} → <b>${formatMult(currentQuiz.result)}</b>${extra}`
-      : `${tr("answerIs")}: <b>${formatMult(currentQuiz.result)}</b> — <b>${a}</b> → <b>${d1}</b> = ${formatMult(currentQuiz.e1)}, <b>${a}</b> → <b>${d2}</b> = ${formatMult(currentQuiz.e2)}${extra}`;
+      ? `${tr("correct")} <b>${a}</b> → <b>${d1}</b> = ${formatMult(currentQuiz.e1)}, <b>${a}</b> → <b>${d2}</b> = ${formatMult(currentQuiz.e2)} → <b>${formatMult(currentQuiz.result)}</b>${resultCue}${extra}`
+      : `${tr("answerIs")}: <b>${formatMult(currentQuiz.result)}</b> — <b>${a}</b> → <b>${d1}</b> = ${formatMult(currentQuiz.e1)}, <b>${a}</b> → <b>${d2}</b> = ${formatMult(currentQuiz.e2)}${resultCue}${extra}`;
   }
 
   els.quizFeedback.className = "feedback show " + (isCorrect ? "good" : "bad");
@@ -2025,21 +2731,45 @@ function startMemoryQuestion(){
   memorySelected = new Set();
   memoryRevealed = false;
 
-  const first = rand(TYPES);
-  currentMemoryTypes = [first];
+  const isReview = mainMode === "review" && reviewKind === "memory";
+  let reviewQuestion = null;
 
-  if (memoryMode === "defense" && memoryDefenseTypeMode === "dual"){
-    let second = rand(TYPES);
-    while (second === first) second = rand(TYPES);
-    currentMemoryTypes.push(second);
+  if (isReview){
+    reviewQuestion = makeMemoryReviewQuestion();
+    const hasQuestion = !!reviewQuestion;
+    els.memoryReviewEmpty.classList.toggle("hidden", hasQuestion);
+    els.memoryLayout.classList.toggle("hidden", !hasQuestion);
+    if (!hasQuestion){
+      renderStats();
+      return;
+    }
+
+    memoryMode = reviewQuestion.direction;
+    memoryTargetMultiplier = Number(reviewQuestion.target);
+    memoryDefenseTypeMode = reviewQuestion.typing || "single";
+    currentMemoryTypes = [...reviewQuestion.types];
+  } else {
+    els.memoryReviewEmpty.classList.add("hidden");
+    els.memoryLayout.classList.remove("hidden");
+
+    const first = rand(TYPES);
+    currentMemoryTypes = [first];
+
+    if (memoryMode === "defense" && memoryDefenseTypeMode === "dual"){
+      let second = rand(TYPES);
+      while (second === first) second = rand(TYPES);
+      currentMemoryTypes.push(second);
+    }
   }
+
+  renderMemoryControls();
+  activateButtons(memoryTypeButtons, memoryDefenseTypeMode, "memoryType");
 
   els.memoryFeedback.className = "feedback";
   els.memoryFeedback.innerHTML = "";
   els.nextMemoryBtn.classList.add("hidden");
   els.revealBtn.classList.remove("hidden");
 
-  renderStats();
   renderTypePill(els.focusTypePill, currentMemoryTypes[0]);
 
   const isDualDefense = memoryMode === "defense" && currentMemoryTypes.length === 2;
@@ -2049,19 +2779,46 @@ function startMemoryQuestion(){
     renderTypePill(els.focusTypePill2, currentMemoryTypes[1]);
   }
 
-  if (memoryMode === "attack"){
-    els.memoryTitle.textContent = tr("memoryAttackTitle");
-    els.memoryPrompt.textContent = tr("memoryAttackPrompt")(typeName(currentMemoryTypes[0]));
+  renderMemoryTargetCue();
+
+  const t1 = typeName(currentMemoryTypes[0]);
+  const t2 = isDualDefense ? typeName(currentMemoryTypes[1]) : "";
+
+  if (memoryMode === "attack" && memoryTargetMultiplier === 2){
+    els.memoryTitle.textContent = tr("attackGoodTitle");
+    els.memoryPrompt.textContent = tr("attackGoodPrompt")(t1);
+  } else if (memoryMode === "attack"){
+    els.memoryTitle.textContent = tr("attackBadTitle");
+    els.memoryPrompt.textContent = tr("attackBadPrompt")(t1);
+  } else if (memoryTargetMultiplier === 2 && isDualDefense){
+    els.memoryTitle.textContent = tr("defenseWeakDualTitle");
+    els.memoryPrompt.textContent = tr("defenseWeakDualPrompt")(t1, t2);
+  } else if (memoryTargetMultiplier === 2){
+    els.memoryTitle.textContent = tr("defenseWeakSingleTitle");
+    els.memoryPrompt.textContent = tr("defenseWeakSinglePrompt")(t1);
   } else if (isDualDefense){
-    const [t1, t2] = currentMemoryTypes;
-    els.memoryTitle.textContent = tr("memoryDefenseDualTitle");
-    els.memoryPrompt.textContent = tr("memoryDefenseDualPrompt")(typeName(t1), typeName(t2));
+    els.memoryTitle.textContent = tr("defenseResistDualTitle");
+    els.memoryPrompt.textContent = tr("defenseResistDualPrompt")(t1, t2);
   } else {
-    els.memoryTitle.textContent = tr("memoryDefenseSingleTitle");
-    els.memoryPrompt.textContent = tr("memoryDefenseSinglePrompt")(typeName(currentMemoryTypes[0]));
+    els.memoryTitle.textContent = tr("defenseResistSingleTitle");
+    els.memoryPrompt.textContent = tr("defenseResistSinglePrompt")(t1);
   }
 
   renderMemoryGrid();
+  renderStats();
+}
+
+function renderMemoryTargetCue(){
+  let multipliers = [];
+  const dualDefense = memoryMode === "defense" && currentMemoryTypes.length === 2;
+
+  if (memoryTargetMultiplier === 2){
+    multipliers = dualDefense ? [4, 2] : [2];
+  } else {
+    multipliers = dualDefense ? [0.5, 0.25] : [0.5];
+  }
+
+  els.memoryTargetCue.innerHTML = multipliers.map(effectCueHTML).join("");
 }
 
 function renderMemoryGrid(){
@@ -2102,31 +2859,73 @@ function getMemoryEffectiveness(type){
 
 function getMemoryAnswers(){
   if (memoryMode === "attack"){
-    return TYPES.filter(defender => getMemoryEffectiveness(defender) === 2);
+    return TYPES.filter(defender => getMemoryEffectiveness(defender) === memoryTargetMultiplier);
   }
-  return TYPES.filter(attacker => getMemoryEffectiveness(attacker) > 1);
+
+  if (memoryTargetMultiplier === 2){
+    if (currentMemoryTypes.length === 2){
+      return TYPES.filter(attacker => getMemoryEffectiveness(attacker) > 1);
+    }
+    return TYPES.filter(attacker => getMemoryEffectiveness(attacker) === 2);
+  }
+
+  if (currentMemoryTypes.length === 2){
+    return TYPES.filter(attacker => {
+      const value = getMemoryEffectiveness(attacker);
+      return value > 0 && value < 1;
+    });
+  }
+  return TYPES.filter(attacker => getMemoryEffectiveness(attacker) === 0.5);
+}
+
+function renderMemoryAnswerGroups(answers){
+  const order = [4, 2, 1, 0.5, 0.25, 0];
+  const groups = [];
+
+  order.forEach(mult => {
+    const list = answers.filter(type => getMemoryEffectiveness(type) === mult);
+    if (list.length){
+      groups.push(`
+        <div class="effect-answer-group">
+          ${effectCueHTML(mult)}
+          <div class="answer-summary">${list.map(renderMiniPill).join("")}</div>
+        </div>
+      `);
+    }
+  });
+
+  return groups.join("");
 }
 
 function revealMemory(){
   if (memoryRevealed) return;
   memoryRevealed = true;
+
   const answers = getMemoryAnswers();
   const selectedSorted = TYPES.filter(t => memorySelected.has(t));
   const correctSet = new Set(answers);
 
-  let ok = true;
-  if (selectedSorted.length !== answers.length) ok = false;
+  let ok = selectedSorted.length === answers.length;
   for (const t of selectedSorted){
     if (!correctSet.has(t)) ok = false;
   }
 
   const s = state.memoryStats;
   s.total += 1;
+
+  const snapshot = memoryQuestionSnapshot();
+  const isReview = mainMode === "review" && reviewKind === "memory";
+
+  let reviewMessage = "";
   if (ok){
     s.correct += 1;
     s.streak += 1;
+    removeWrongMemoryQuestion(snapshot);
+    if (isReview) reviewMessage = tr("memoryRemovedWrong");
   } else {
     s.streak = 0;
+    addWrongMemoryQuestion(snapshot);
+    reviewMessage = isReview ? tr("memoryKeepWrong") : tr("memoryAddedWrong");
   }
   saveState();
 
@@ -2137,39 +2936,35 @@ function revealMemory(){
     : tr("noSelection");
 
   const heading = ok ? tr("correct") : tr("notFullyCorrect");
-  let desc = "";
-  let answerHTML = "";
 
-  if (memoryMode === "attack"){
-    desc = tr("memoryAttackDesc")(typeName(currentMemoryTypes[0]));
-    answerHTML = `<div class="answer-summary">${answers.map(renderMiniPill).join("")}</div>`;
-  } else if (currentMemoryTypes.length === 2){
-    const [t1, t2] = currentMemoryTypes;
-    const fourX = answers.filter(type => getMemoryEffectiveness(type) === 4);
-    const twoX = answers.filter(type => getMemoryEffectiveness(type) === 2);
-    desc = tr("memoryDefenseDualDesc")(typeName(t1), typeName(t2));
-    answerHTML = `
-      ${fourX.length ? `<div class="mult-group"><b>${tr("weakness4")}</b><div class="answer-summary">${fourX.map(renderMiniPill).join("")}</div></div>` : ""}
-      ${twoX.length ? `<div class="mult-group"><b>${tr("weakness2")}</b><div class="answer-summary">${twoX.map(renderMiniPill).join("")}</div></div>` : ""}
-      ${!answers.length ? `<div class="answer-summary">${tr("noWeakness")}</div>` : ""}
-    `;
+  const typeLabel = currentMemoryTypes.map(typeName).join("＋");
+  let desc = "";
+  if (memoryMode === "attack" && memoryTargetMultiplier === 2){
+    desc = tr("attackGoodDesc")(typeName(currentMemoryTypes[0]));
+  } else if (memoryMode === "attack"){
+    desc = tr("attackBadDesc")(typeName(currentMemoryTypes[0]));
+  } else if (memoryTargetMultiplier === 2){
+    desc = tr("defenseWeakDesc")(typeLabel);
   } else {
-    desc = tr("memoryDefenseSingleDesc")(typeName(currentMemoryTypes[0]));
-    answerHTML = `<div class="answer-summary">${answers.map(renderMiniPill).join("")}</div>`;
+    desc = tr("defenseResistDesc")(typeLabel);
   }
 
   els.memoryFeedback.innerHTML = `
     <div><b>${heading}</b></div>
     <div style="margin-top:6px">${desc}</div>
-    ${answerHTML}
+    ${renderMemoryAnswerGroups(answers)}
     <div style="margin-top:12px;color:#b9c7dc">${tr("yourChoice")}</div>
     <div class="answer-summary">${selectedPills}</div>
+    ${reviewMessage ? `<div style="margin-top:10px;color:#aab9d1">${reviewMessage}</div>` : ""}
   `;
+
   els.memoryFeedback.className = "feedback show " + (ok ? "good" : "bad");
   els.nextMemoryBtn.classList.remove("hidden");
   els.revealBtn.classList.add("hidden");
   renderStats();
 }
+
+
 
 
 
@@ -2179,16 +2974,21 @@ function chartEffectChip(type){
 
 function renderEffectRows(groups){
   const rows = [
-    {key:"double", label:"2×", cls:"x2"},
-    {key:"half", label:"½×", cls:"xhalf"},
-    {key:"zero", label:"0×", cls:"x0"}
+    {key:"double", mult:2},
+    {key:"neutral", mult:1},
+    {key:"half", mult:0.5},
+    {key:"zero", mult:0}
   ];
 
   return rows.map(row => {
     const list = groups[row.key] || [];
+    const info = effectInfo(row.mult);
     return `
       <div class="effect-row">
-        <div class="effect-badge ${row.cls}">${row.label}</div>
+        <div class="effect-badge ${effectClass(row.mult)}">
+          <span class="eb-main"><span>${info.symbol}</span><span>${formatMult(row.mult)}</span></span>
+          <span class="eb-term">${effectTerm(row.mult)}</span>
+        </div>
         <div class="effect-types">
           ${list.length ? list.map(chartEffectChip).join("") : `<span class="effect-none">${tr("none")}</span>`}
         </div>
@@ -2198,17 +2998,18 @@ function renderEffectRows(groups){
 }
 
 function getAttackChartGroups(type){
-  const row = CHART[type] || {};
   return {
-    double:[...(row.double || [])],
-    half:[...(row.half || [])],
-    zero:[...(row.zero || [])]
+    double:TYPES.filter(defender => eff(type, defender) === 2),
+    neutral:TYPES.filter(defender => eff(type, defender) === 1),
+    half:TYPES.filter(defender => eff(type, defender) === 0.5),
+    zero:TYPES.filter(defender => eff(type, defender) === 0)
   };
 }
 
 function getDefenseChartGroups(type){
   return {
     double:TYPES.filter(attacker => eff(attacker, type) === 2),
+    neutral:TYPES.filter(attacker => eff(attacker, type) === 1),
     half:TYPES.filter(attacker => eff(attacker, type) === 0.5),
     zero:TYPES.filter(attacker => eff(attacker, type) === 0)
   };
@@ -2233,14 +3034,18 @@ function renderTypeChart(){
   renderTypePill(els.chartFocusPill, chartType);
   els.chartAttackGroups.innerHTML = renderEffectRows(getAttackChartGroups(chartType));
   els.chartDefenseGroups.innerHTML = renderEffectRows(getDefenseChartGroups(chartType));
+  renderMatrixLegend();
   renderFullMatrix();
 }
 
+function renderMatrixLegend(){
+  const values = [4, 2, 1, 0.5, 0.25, 0];
+  els.matrixLegend.innerHTML = values.map(effectCueHTML).join("");
+}
+
 function matrixValue(mult){
-  if (mult === 2) return {text:"2", cls:"x2"};
-  if (mult === 0.5) return {text:"½", cls:"xhalf"};
-  if (mult === 0) return {text:"0", cls:"x0"};
-  return {text:"", cls:"x1"};
+  const info = effectInfo(mult);
+  return {text:info.symbol, cls:effectClass(mult)};
 }
 
 function renderFullMatrix(){
@@ -2255,14 +3060,13 @@ function renderFullMatrix(){
     for (const defender of TYPES){
       const mult = eff(attacker, defender);
       const v = matrixValue(mult);
-      out += `<td class="${v.cls}" title="${typeName(attacker)} → ${typeName(defender)} = ${formatMult(mult)}">${v.text}</td>`;
+      out += `<td class="${v.cls}" title="${typeName(attacker)} → ${typeName(defender)} = ${formatMult(mult)} ${effectInfo(mult).symbol} ${effectTerm(mult)}">${v.text}</td>`;
     }
     out += `</tr>`;
   }
   out += `</tbody>`;
   els.typeMatrix.innerHTML = out;
 }
-
 
 document.getElementById("resetQuizBtn").addEventListener("click", () => {
   if (!confirm(tr("confirmReset"))) return;
@@ -2275,9 +3079,13 @@ document.getElementById("resetQuizBtn").addEventListener("click", () => {
 document.getElementById("clearWrongBtn").addEventListener("click", () => {
   if (!confirm(tr("confirmClearWrong"))) return;
   state.wrongQuestions = [];
+  state.wrongMemoryQuestions = [];
   saveState();
   renderStats();
-  if (mainMode === "review") startQuizQuestion();
+  if (mainMode === "review"){
+    if (reviewKind === "memory") startMemoryQuestion();
+    else startQuizQuestion();
+  }
 });
 
 document.querySelectorAll(".lang-btn").forEach(btn => {
@@ -2287,7 +3095,9 @@ document.querySelectorAll(".lang-btn").forEach(btn => {
 mainModeButtons.forEach(btn => btn.addEventListener("click", () => switchMainMode(btn.dataset.main)));
 quizModeButtons.forEach(btn => btn.addEventListener("click", () => switchQuizMode(btn.dataset.quiz)));
 memoryModeButtons.forEach(btn => btn.addEventListener("click", () => switchMemoryMode(btn.dataset.memory)));
+memoryTargetButtons.forEach(btn => btn.addEventListener("click", () => switchMemoryTarget(btn.dataset.memoryTarget)));
 memoryTypeButtons.forEach(btn => btn.addEventListener("click", () => switchMemoryTypeMode(btn.dataset.memoryType)));
+reviewKindButtons.forEach(btn => btn.addEventListener("click", () => switchReviewKind(btn.dataset.reviewKind)));
 
 els.nextQuizBtn.addEventListener("click", startQuizQuestion);
 els.revealBtn.addEventListener("click", revealMemory);
@@ -2295,7 +3105,8 @@ els.nextMemoryBtn.addEventListener("click", startMemoryQuestion);
 
 document.addEventListener("keydown", (e) => {
   if (mainMode === "chart") return;
-  if (mainMode !== "memory"){
+  const usingMemory = mainMode === "memory" || (mainMode === "review" && reviewKind === "memory");
+  if (!usingMemory){
     const choiceCount = els.choices.children.length;
     const num = Number(e.key);
     if (!quizAnswered && num >= 1 && num <= choiceCount){
