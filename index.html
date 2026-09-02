@@ -1,0 +1,2073 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>屬性相剋訓練器</title>
+<meta name="theme-color" content="#0b1220">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="屬性相剋訓練器" id="appleAppTitle">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23111827'/%3E%3Ccircle cx='50' cy='50' r='31' fill='none' stroke='%23f5b971' stroke-width='10'/%3E%3Cpath d='M18 50h64' stroke='%23f5b971' stroke-width='10'/%3E%3Ccircle cx='50' cy='50' r='10' fill='%23f5b971'/%3E%3C/svg%3E">
+<style>
+  :root{
+    --bg:#111827;
+    --bg2:#0f172a;
+    --panel:#1c2437;
+    --panel2:#20293f;
+    --panel3:#2a344c;
+    --line:rgba(255,255,255,.08);
+    --text:#f8fafc;
+    --muted:#a5b4cf;
+    --accent:#f5b971;
+    --accent2:#f7c88f;
+    --good:#22c55e;
+    --bad:#ef4444;
+    --warn:#f59e0b;
+    --shadow:0 16px 40px rgba(0,0,0,.28);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;
+    background:linear-gradient(180deg, #0b1220 0%, #131b2d 100%);
+    color:var(--text);
+  }
+  .wrap{max-width:980px;margin:0 auto;padding:22px 14px 42px}
+  .hero{
+    background:rgba(13,19,33,.55);
+    border:1px solid var(--line);
+    border-radius:28px;
+    padding:22px 18px 16px;
+    box-shadow:var(--shadow);
+    backdrop-filter: blur(10px);
+  }
+  h1{
+    margin:0 0 6px;
+    font-size:42px;
+    line-height:1;
+    letter-spacing:-0.02em;
+    font-weight:800;
+  }
+  .subtitle{
+    color:var(--muted);
+    font-size:15px;
+    line-height:1.6;
+    margin-bottom:14px;
+  }
+  .seg{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+  }
+  .seg button{
+    border:1px solid rgba(255,255,255,.08);
+    background:#151d30;
+    color:#d5dbe8;
+    padding:11px 14px;
+    border-radius:16px;
+    font-size:15px;
+    font-weight:700;
+    cursor:pointer;
+    transition:.15s ease;
+  }
+  .seg button.active{
+    background:#344155;
+    color:#ffcf97;
+    border-color:rgba(245,185,113,.45);
+    box-shadow: inset 0 0 0 1px rgba(245,185,113,.14);
+  }
+  .top-grid{
+    margin-top:16px;
+    display:grid;
+    grid-template-columns: 1.1fr .9fr;
+    gap:16px;
+  }
+  .panel{
+    background:linear-gradient(180deg, rgba(34,44,68,.97), rgba(24,33,54,.98));
+    border:1px solid var(--line);
+    border-radius:26px;
+    box-shadow:var(--shadow);
+    padding:18px;
+  }
+  .panel-title{
+    font-size:14px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:#c9d3e7;
+    margin-bottom:12px;
+    font-weight:800;
+  }
+  .stat-grid{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:10px;
+  }
+  .stat{
+    background:rgba(255,255,255,.03);
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:12px 14px;
+  }
+  .stat .label{
+    color:#9fb0ca;
+    font-size:13px;
+    margin-bottom:3px;
+  }
+  .stat .value{
+    font-size:24px;
+    font-weight:800;
+  }
+  .card{
+    background:linear-gradient(180deg, #20293f 0%, #1b2438 100%);
+    border:1px solid var(--line);
+    border-radius:28px;
+    box-shadow:var(--shadow);
+    padding:18px;
+    margin-top:16px;
+  }
+  .toolbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:12px;
+    margin-bottom:16px;
+    flex-wrap:wrap;
+  }
+  .toolbar .group{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    align-items:center;
+  }
+  .toolbar-label{
+    color:#a5b4cf;
+    font-size:13px;
+    font-weight:700;
+    margin-right:2px;
+  }
+  .mini-btn{
+    border:1px solid var(--line);
+    background:#161f34;
+    color:#dfe7f5;
+    padding:9px 12px;
+    border-radius:14px;
+    cursor:pointer;
+    font-size:14px;
+    font-weight:700;
+  }
+  .mini-btn.active{
+    background:#2e3b54;
+    color:#ffcf97;
+    border-color:rgba(245,185,113,.38);
+  }
+
+  .question-box{
+    background:rgba(255,255,255,.03);
+    border:1px solid var(--line);
+    border-radius:24px;
+    padding:18px;
+  }
+  .question-hint{
+    color:#97a7c3;
+    font-size:13px;
+    margin-bottom:8px;
+    font-weight:700;
+  }
+  .question-row{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    gap:12px;
+    min-height:74px;
+    justify-content:center;
+    padding:6px 0 4px;
+  }
+  .arrow{
+    color:#8fa4c4;
+    font-size:28px;
+    font-weight:900;
+  }
+  .plus{
+    color:#90a3c1;
+    font-size:24px;
+    font-weight:900;
+  }
+  .type-pill{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:12px 16px;
+    border-radius:999px;
+    font-weight:800;
+    font-size:22px;
+    color:#07111f;
+    box-shadow: inset 0 -1px 0 rgba(0,0,0,.12);
+    min-width:116px;
+    justify-content:center;
+  }
+  .type-pill .icon{
+    width:26px;
+    height:26px;
+    display:block;
+    object-fit:contain;
+    flex:0 0 26px;
+  }
+  .choices{
+    margin-top:16px;
+    display:grid;
+    grid-template-columns:repeat(3, minmax(0,1fr));
+    gap:12px;
+  }
+  .choice{
+    border:2px solid rgba(255,255,255,.08);
+    background:#101828;
+    color:#f8fafc;
+    border-radius:18px;
+    padding:16px 10px;
+    font-size:22px;
+    font-weight:800;
+    cursor:pointer;
+    transition:.12s ease;
+  }
+  .choice:hover{transform:translateY(-1px);border-color:rgba(255,255,255,.18)}
+  .choice.correct{
+    background:rgba(34,197,94,.12);
+    border-color:rgba(34,197,94,.65);
+    color:#c7f7d6;
+  }
+  .choice.wrong{
+    background:rgba(239,68,68,.12);
+    border-color:rgba(239,68,68,.65);
+    color:#ffd4d4;
+  }
+  .choice:disabled{cursor:default;transform:none}
+
+  .feedback{
+    display:none;
+    margin-top:16px;
+    border-radius:18px;
+    padding:14px 16px;
+    line-height:1.65;
+    border:1px solid var(--line);
+    background:#182134;
+    color:#ebf2ff;
+  }
+  .feedback.show{display:block}
+  .feedback.good{border-color:rgba(34,197,94,.45); background:rgba(34,197,94,.08)}
+  .feedback.bad{border-color:rgba(239,68,68,.45); background:rgba(239,68,68,.08)}
+
+  .bottom-actions{
+    display:flex;
+    justify-content:flex-end;
+    gap:10px;
+    margin-top:14px;
+    flex-wrap:wrap;
+  }
+  .primary-btn, .secondary-btn{
+    border:0;
+    border-radius:16px;
+    padding:12px 16px;
+    font-size:15px;
+    font-weight:800;
+    cursor:pointer;
+  }
+  .primary-btn{
+    background:linear-gradient(180deg, #f4bb72 0%, #e49b47 100%);
+    color:#1d1407;
+  }
+  .secondary-btn{
+    background:#182033;
+    color:#dee8fa;
+    border:1px solid var(--line);
+  }
+
+  .legend{
+    margin-top:14px;
+    color:#95a8c9;
+    font-size:13px;
+    line-height:1.65;
+  }
+
+  .memory-layout{
+    display:grid;
+    grid-template-columns: 1fr;
+    gap:16px;
+  }
+  .memory-focus{
+    background:rgba(255,255,255,.03);
+    border:1px solid var(--line);
+    border-radius:24px;
+    padding:18px;
+  }
+  .memory-title{
+    color:#cfd9eb;
+    font-weight:800;
+    font-size:15px;
+    margin-bottom:12px;
+  }
+  .memory-prompt{
+    color:#aab9d1;
+    line-height:1.7;
+    font-size:15px;
+    margin-top:12px;
+  }
+
+  .type-grid{
+    display:grid;
+    grid-template-columns:repeat(3, minmax(0,1fr));
+    gap:12px;
+  }
+  .type-card{
+    border:1px solid rgba(255,255,255,.08);
+    background:#1c2538;
+    border-radius:20px;
+    padding:16px 12px;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-weight:800;
+    font-size:18px;
+    color:#eaf1fb;
+    min-height:66px;
+    transition:.12s ease;
+  }
+  .type-card:hover{transform:translateY(-1px);border-color:rgba(255,255,255,.18)}
+  .type-card .badge{
+    width:36px;height:36px;
+    display:grid;place-items:center;
+    flex:0 0 36px;
+  }
+  .type-card .badge img{
+    width:36px;
+    height:36px;
+    display:block;
+    object-fit:contain;
+  }
+  .type-card.selected{
+    outline:2px solid rgba(245,185,113,.7);
+    background:#24314a;
+  }
+  .type-card.correct{
+    background:rgba(34,197,94,.12);
+    border-color:rgba(34,197,94,.55);
+  }
+  .type-card.wrong{
+    background:rgba(239,68,68,.12);
+    border-color:rgba(239,68,68,.55);
+  }
+  .type-card.missed{
+    background:rgba(245,158,11,.09);
+    border-color:rgba(245,158,11,.55);
+  }
+
+  .answer-summary{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-top:12px;
+  }
+  .mini-pill{
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    border-radius:999px;
+    padding:7px 12px 7px 8px;
+    font-size:14px;
+    font-weight:800;
+    color:#07111f;
+  }
+  .mini-pill img{
+    width:23px;
+    height:23px;
+    display:block;
+    object-fit:contain;
+  }
+
+  .empty{
+    padding:28px 18px;
+    border:1px dashed rgba(255,255,255,.14);
+    border-radius:22px;
+    color:#b3c1d8;
+    background:rgba(255,255,255,.02);
+    text-align:center;
+    line-height:1.8;
+  }
+  .hidden{display:none !important}
+
+  .foot-note{
+    margin-top:14px;
+    color:#8fa1c0;
+    font-size:13px;
+    line-height:1.65;
+  }
+
+  @media (max-width: 860px){
+    .top-grid{grid-template-columns:1fr}
+  }
+  @media (max-width: 700px){
+    h1{font-size:34px}
+    .choices{grid-template-columns:repeat(2, minmax(0,1fr))}
+    .type-grid{grid-template-columns:repeat(2, minmax(0,1fr))}
+    .type-pill{font-size:20px; min-width:104px}
+  }
+  @media (max-width: 430px){
+    .wrap{padding:14px 10px 36px}
+    .hero, .card, .panel{border-radius:24px}
+    .choices{grid-template-columns:1fr 1fr}
+    .type-grid{grid-template-columns:1fr 1fr}
+    .type-pill{font-size:18px; min-width:98px; padding:10px 14px}
+  }
+
+  /* v4：Mobile-first 版面 */
+  .wrap{
+    max-width:620px;
+    padding:10px 10px 86px;
+  }
+  .hero{
+    padding:16px 12px 12px;
+    border-radius:22px;
+  }
+  h1{
+    font-size:30px;
+    margin-bottom:5px;
+  }
+  .subtitle{
+    font-size:13px;
+    margin-bottom:12px;
+  }
+  .seg{
+    display:grid;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:6px;
+    position:sticky;
+    top:6px;
+    z-index:30;
+    padding:6px;
+    margin:0 -2px;
+    border-radius:17px;
+    background:rgba(10,16,29,.92);
+    backdrop-filter:blur(12px);
+  }
+  .seg button{
+    padding:10px 5px;
+    border-radius:12px;
+    font-size:13px;
+    white-space:nowrap;
+  }
+  .top-grid{
+    grid-template-columns:1fr;
+    gap:8px;
+    margin-top:10px;
+  }
+  .panel{
+    padding:11px;
+    border-radius:18px;
+    box-shadow:none;
+  }
+  .panel-title{
+    font-size:11px;
+    margin-bottom:7px;
+  }
+  .stat-grid{
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    gap:6px;
+  }
+  .stat{
+    padding:8px 5px;
+    border-radius:12px;
+    text-align:center;
+  }
+  .stat .label{font-size:10px}
+  .stat .value{font-size:18px}
+  .top-grid .panel:nth-child(2) .foot-note{
+    display:none;
+  }
+  .top-grid .panel:nth-child(2){
+    padding:7px 10px;
+  }
+  .top-grid .panel:nth-child(2) .panel-title{
+    display:none;
+  }
+  .top-grid .panel:nth-child(2) .bottom-actions{
+    margin:0;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:6px;
+  }
+  .top-grid .panel:nth-child(2) .secondary-btn{
+    padding:8px 8px;
+    font-size:12px;
+  }
+
+  .card{
+    padding:12px;
+    margin-top:10px;
+    border-radius:22px;
+    box-shadow:none;
+  }
+  .toolbar{
+    gap:8px;
+    margin-bottom:10px;
+  }
+  .toolbar .group{
+    width:100%;
+    display:grid;
+    grid-template-columns:auto 1fr 1fr;
+    gap:6px;
+  }
+  .toolbar-label{
+    align-self:center;
+    font-size:11px;
+    margin:0 3px 0 0;
+  }
+  .mini-btn{
+    padding:9px 7px;
+    border-radius:11px;
+    font-size:12px;
+    min-height:38px;
+  }
+  .question-box,
+  .memory-focus{
+    padding:12px;
+    border-radius:18px;
+  }
+  .question-hint{
+    font-size:11px;
+    margin-bottom:5px;
+  }
+  .question-row{
+    min-height:58px;
+    gap:7px;
+    padding:3px 0;
+  }
+  .memory-focus-row{
+    justify-content:flex-start;
+    padding:0;
+    min-height:auto;
+  }
+  .type-pill{
+    min-width:0;
+    padding:9px 11px;
+    gap:6px;
+    font-size:16px;
+  }
+  .type-pill .icon{
+    width:23px;
+    height:23px;
+    flex-basis:23px;
+  }
+  .arrow{font-size:21px}
+  .plus{font-size:18px}
+
+  .choices{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:8px;
+    margin-top:10px;
+  }
+  .choice{
+    padding:14px 8px;
+    border-radius:15px;
+    font-size:20px;
+  }
+
+  .memory-layout{gap:10px}
+  .memory-title{font-size:13px;margin-bottom:8px}
+  .memory-prompt{font-size:13px;margin-top:8px;line-height:1.55}
+  .type-grid{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:6px;
+  }
+  .type-card{
+    min-height:58px;
+    padding:8px 5px;
+    border-radius:14px;
+    gap:5px;
+    flex-direction:column;
+    justify-content:center;
+    text-align:center;
+    font-size:12px;
+  }
+  .type-card .badge,
+  .type-card .badge img{
+    width:29px;
+    height:29px;
+  }
+  .answer-summary{gap:5px;margin-top:8px}
+  .mini-pill{
+    padding:5px 8px 5px 5px;
+    font-size:12px;
+    gap:4px;
+  }
+  .mini-pill img{
+    width:19px;
+    height:19px;
+  }
+  .mult-group{
+    margin-top:10px;
+  }
+  .mult-group > b{
+    display:block;
+    font-size:12px;
+    color:#dbe7f8;
+  }
+  .feedback{
+    padding:11px 12px;
+    margin-top:10px;
+    border-radius:15px;
+    font-size:13px;
+  }
+  .legend{
+    font-size:11px;
+    margin-top:9px;
+    line-height:1.55;
+  }
+
+  .card > .bottom-actions,
+  .memory-layout > .bottom-actions{
+    position:sticky;
+    bottom:8px;
+    z-index:25;
+    margin:10px -4px 0;
+    padding:6px;
+    border-radius:16px;
+    background:rgba(15,23,42,.92);
+    backdrop-filter:blur(12px);
+  }
+  .card > .bottom-actions .primary-btn,
+  .memory-layout > .bottom-actions .primary-btn,
+  .memory-layout > .bottom-actions .secondary-btn{
+    flex:1;
+    min-height:44px;
+  }
+
+  @media (min-width:700px){
+    .wrap{max-width:900px;padding:22px 16px 48px}
+    .hero{padding:22px 18px 16px;border-radius:28px}
+    h1{font-size:40px}
+    .subtitle{font-size:15px}
+    .seg{position:static;display:flex;padding:0;background:transparent}
+    .seg button{padding:11px 14px;font-size:15px}
+    .top-grid{grid-template-columns:1.1fr .9fr;gap:16px;margin-top:16px}
+    .panel{padding:18px;border-radius:26px;box-shadow:var(--shadow)}
+    .panel-title{font-size:14px;margin-bottom:12px}
+    .stat-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+    .stat{padding:12px 14px;text-align:left;border-radius:18px}
+    .stat .label{font-size:13px}.stat .value{font-size:24px}
+    .top-grid .panel:nth-child(2) .foot-note{display:block}
+    .top-grid .panel:nth-child(2){padding:18px}
+    .top-grid .panel:nth-child(2) .panel-title{display:block}
+    .top-grid .panel:nth-child(2) .bottom-actions{display:flex;margin-top:16px}
+    .card{padding:18px;margin-top:16px;border-radius:28px;box-shadow:var(--shadow)}
+    .toolbar .group{width:auto;display:flex}
+    .toolbar-label{font-size:13px}
+    .mini-btn{padding:9px 12px;font-size:14px}
+    .question-box,.memory-focus{padding:18px;border-radius:24px}
+    .type-pill{font-size:21px;padding:12px 16px}
+    .type-pill .icon{width:26px;height:26px;flex-basis:26px}
+    .type-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+    .type-card{min-height:66px;padding:16px 12px;border-radius:20px;flex-direction:row;justify-content:flex-start;font-size:18px}
+    .type-card .badge,.type-card .badge img{width:36px;height:36px}
+    .legend{font-size:13px}
+  }
+
+
+  /* v5：手機版屬性相剋表 */
+  .seg{
+    grid-template-columns:repeat(4,minmax(0,1fr));
+  }
+  .seg button{
+    font-size:12px;
+    padding-left:3px;
+    padding-right:3px;
+  }
+  .chart-head h2{
+    margin:2px 0 5px;
+    font-size:23px;
+  }
+  .chart-kicker{
+    color:#8ea3c4;
+    font-size:10px;
+    font-weight:900;
+    letter-spacing:.12em;
+  }
+  .chart-sub{
+    color:#98a9c4;
+    font-size:12px;
+    line-height:1.55;
+  }
+  .chart-type-grid{
+    display:grid;
+    grid-template-columns:repeat(6,minmax(0,1fr));
+    gap:6px;
+    margin-top:12px;
+  }
+  .chart-type-btn{
+    min-width:0;
+    min-height:55px;
+    padding:6px 2px 5px;
+    border-radius:13px;
+    border:1px solid rgba(255,255,255,.08);
+    background:#182236;
+    color:#dce7f8;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:3px;
+    cursor:pointer;
+    font-size:9px;
+    font-weight:800;
+  }
+  .chart-type-btn img{
+    width:27px;
+    height:27px;
+    display:block;
+    object-fit:contain;
+  }
+  .chart-type-btn.active{
+    background:#2c3952;
+    border-color:rgba(245,185,113,.7);
+    box-shadow:inset 0 0 0 1px rgba(245,185,113,.2);
+    color:#ffd49f;
+  }
+  .chart-selected{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-top:12px;
+    padding:10px;
+    background:rgba(255,255,255,.03);
+    border:1px solid var(--line);
+    border-radius:17px;
+  }
+  .chart-selected-label{
+    color:#93a5c2;
+    font-size:11px;
+    font-weight:700;
+  }
+  .chart-columns{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:10px;
+    margin-top:10px;
+  }
+  .chart-section{
+    background:#182236;
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:12px;
+  }
+  .chart-section-title{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    margin-bottom:10px;
+  }
+  .chart-section-title b{
+    display:block;
+    font-size:15px;
+  }
+  .chart-section-title small{
+    display:block;
+    color:#91a4c2;
+    font-size:10px;
+    margin-top:2px;
+  }
+  .chart-role-icon{
+    width:34px;
+    height:34px;
+    display:grid;
+    place-items:center;
+    background:#26324a;
+    border-radius:11px;
+    font-size:18px;
+  }
+  .effect-row{
+    display:grid;
+    grid-template-columns:44px 1fr;
+    gap:7px;
+    align-items:start;
+    margin-top:8px;
+  }
+  .effect-badge{
+    display:grid;
+    place-items:center;
+    min-height:31px;
+    border-radius:10px;
+    font-size:12px;
+    font-weight:900;
+  }
+  .effect-badge.x2{background:#1f8f4a;color:#eafff1}
+  .effect-badge.xhalf{background:#d76224;color:#fff2e8}
+  .effect-badge.x0{background:#0b0f18;color:#c4ccda;border:1px solid #495268}
+  .effect-badge.x1{background:#3a4355;color:#e0e6f0}
+  .effect-types{
+    display:flex;
+    gap:5px;
+    flex-wrap:wrap;
+    min-height:31px;
+    align-items:center;
+  }
+  .effect-chip{
+    display:inline-flex;
+    align-items:center;
+    gap:4px;
+    padding:4px 7px 4px 5px;
+    border-radius:999px;
+    color:#08111e;
+    font-size:10px;
+    font-weight:900;
+  }
+  .effect-chip img{
+    width:19px;
+    height:19px;
+    display:block;
+  }
+  .effect-none{
+    color:#71819d;
+    font-size:11px;
+    padding:7px 0;
+  }
+
+  .matrix-details{
+    margin-top:12px;
+    border:1px solid var(--line);
+    background:#141d2f;
+    border-radius:18px;
+    overflow:hidden;
+  }
+  .matrix-details summary{
+    padding:13px;
+    cursor:pointer;
+    font-size:13px;
+    font-weight:800;
+    color:#dce7f8;
+  }
+  .matrix-legend{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    padding:0 13px 10px;
+    color:#9eafc9;
+    font-size:10px;
+  }
+  .matrix-legend span{
+    display:flex;
+    align-items:center;
+    gap:4px;
+  }
+  .legend-swatch{
+    width:12px;height:12px;border-radius:3px;display:inline-block;
+  }
+  .legend-swatch.x2{background:#1f8f4a}
+  .legend-swatch.xhalf{background:#d76224}
+  .legend-swatch.x0{background:#05080d;border:1px solid #697287}
+  .matrix-wrap{
+    width:100%;
+    overflow:auto;
+    overscroll-behavior:contain;
+    -webkit-overflow-scrolling:touch;
+    border-top:1px solid var(--line);
+    border-bottom:1px solid var(--line);
+    max-height:68vh;
+  }
+  .type-matrix{
+    border-collapse:separate;
+    border-spacing:0;
+    min-width:775px;
+    background:#f5f6f8;
+    color:#101522;
+  }
+  .type-matrix th,
+  .type-matrix td{
+    width:40px;
+    min-width:40px;
+    height:40px;
+    text-align:center;
+    border-right:1px solid #cbd0d8;
+    border-bottom:1px solid #cbd0d8;
+    padding:0;
+    font-size:12px;
+    font-weight:900;
+  }
+  .type-matrix th{
+    background:#202a3e;
+  }
+  .type-matrix .corner{
+    position:sticky;
+    left:0;
+    top:0;
+    z-index:5;
+    background:#111827;
+    color:#cbd6e8;
+    font-size:8px;
+    line-height:1.2;
+  }
+  .type-matrix thead th{
+    position:sticky;
+    top:0;
+    z-index:3;
+  }
+  .type-matrix tbody th{
+    position:sticky;
+    left:0;
+    z-index:2;
+  }
+  .type-matrix th img{
+    width:27px;
+    height:27px;
+    display:block;
+    margin:auto;
+    object-fit:contain;
+  }
+  .type-matrix td.x2{background:#1cab43;color:white}
+  .type-matrix td.xhalf{background:#f04b35;color:white}
+  .type-matrix td.x0{background:#090c12;color:white}
+  .type-matrix td.x1{background:#f7f8fa;color:transparent}
+  .matrix-axis-note{
+    padding:9px 12px 11px;
+    color:#8fa1bf;
+    font-size:10px;
+  }
+
+  @media (min-width:700px){
+    .seg button{font-size:14px;padding:11px 12px}
+    .chart-type-grid{grid-template-columns:repeat(9,minmax(0,1fr))}
+    .chart-columns{grid-template-columns:1fr 1fr}
+    .chart-type-btn{font-size:11px}
+    .chart-type-btn img{width:31px;height:31px}
+  }
+
+
+  .language-switch{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:6px;
+    margin-bottom:10px;
+  }
+  .lang-btn{
+    border:1px solid rgba(255,255,255,.08);
+    background:#151d30;
+    color:#aebbd0;
+    min-height:34px;
+    border-radius:11px;
+    font-size:12px;
+    font-weight:800;
+    cursor:pointer;
+  }
+  .lang-btn.active{
+    background:#2e3b54;
+    color:#ffcf97;
+    border-color:rgba(245,185,113,.45);
+  }
+  @media (min-width:700px){
+    .language-switch{display:flex;width:max-content;margin-bottom:12px}
+    .lang-btn{padding:8px 13px}
+  }
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero">
+    <h1 id="appTitle" data-i18n="appTitle">屬性相剋訓練器</h1>
+    <div class="subtitle" data-i18n="subtitle">
+      以手機使用為主的 Pokémon 屬性訓練器：先進行背誦，再做隨機題，最後集中重溫錯題。
+    </div>
+
+    <div class="language-switch" aria-label="Language">
+      <button class="lang-btn active" data-lang="zh-Hant">繁中</button>
+      <button class="lang-btn" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="ja">日本語</button>
+    </div>
+
+    <div class="seg" id="mainModeSeg">
+      <button class="active" data-main="memory" data-i18n="modeMemory">背誦模式</button>
+      <button data-main="quiz" data-i18n="modeQuiz">隨機出題</button>
+      <button data-main="review" data-i18n="modeReview">錯題重溫</button>
+      <button data-main="chart" data-i18n="modeChart">相剋表</button>
+    </div>
+
+    <div class="top-grid" id="dashboardGrid">
+      <div class="panel">
+        <div class="panel-title" id="statsTitle">統計</div>
+        <div class="stat-grid">
+          <div class="stat">
+            <div class="label" data-i18n="statCorrect">答對</div>
+            <div class="value" id="statCorrect">0</div>
+          </div>
+          <div class="stat">
+            <div class="label" data-i18n="statTotal">總題數</div>
+            <div class="value" id="statTotal">0</div>
+          </div>
+          <div class="stat">
+            <div class="label" data-i18n="statStreak">連勝</div>
+            <div class="value" id="statStreak">0</div>
+          </div>
+          <div class="stat">
+            <div class="label" id="stat4Label">命中率</div>
+            <div class="value" id="stat4Value">—</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title" data-i18n="tools">工具</div>
+        <div class="foot-note" style="margin-top:0" id="toolNote">
+          1. 答錯次數越多，之後在隨機出題中出現的機率越高。<br>
+          2. 有錯題時，隨機模式約有 65% 機會優先抽取錯題。<br>
+          3. 答對錯題後，該題會自動移出錯題題庫。<br>
+          4. 背誦模式分為「防守方弱點」及「攻擊方克制」。
+        </div>
+        <div class="bottom-actions" style="margin-top:16px;justify-content:flex-start">
+          <button class="secondary-btn" id="resetQuizBtn" data-i18n="resetStats">重設統計</button>
+          <button class="secondary-btn" id="clearWrongBtn" data-i18n="clearWrong">清空錯題</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" id="quizCard">
+    <div class="toolbar">
+      <div class="group">
+        <div class="toolbar-label" data-i18n="quizType">題目類型</div>
+        <button class="mini-btn active" data-quiz="single" data-i18n="singleType">單屬性</button>
+        <button class="mini-btn" data-quiz="dual" data-i18n="dualType">雙屬性</button>
+      </div>
+    </div>
+
+    <div id="reviewEmpty" class="empty hidden">
+      <span data-i18n="reviewEmpty1">目前這個題型沒有錯題可供重溫。</span><br>
+      <span data-i18n="reviewEmpty2">你可以先到「隨機出題」練習數題，或切換至另一個題型。</span>
+    </div>
+
+    <div id="quizBody">
+      <div class="question-box">
+        <div class="question-hint" id="quizHint">判斷攻擊屬性對防守方會造成多少倍傷害</div>
+        <div class="question-row">
+          <span class="type-pill" id="attackPill"></span>
+          <span class="arrow">→</span>
+          <span class="type-pill" id="def1Pill"></span>
+          <span class="plus hidden" id="plusSign">＋</span>
+          <span class="type-pill hidden" id="def2Pill"></span>
+        </div>
+      </div>
+
+      <div class="choices" id="choices"></div>
+
+      <div class="feedback" id="quizFeedback"></div>
+
+      <div class="bottom-actions">
+        <button class="primary-btn hidden" id="nextQuizBtn" data-i18n="nextQuestion">下一題</button>
+      </div>
+
+      <div class="legend" id="quizLegend">
+        單屬性答案：0× / 0.5× / 1× / 2×。<br>
+        雙屬性答案：0× / 0.25× / 0.5× / 1× / 2× / 4×。<br>
+        提示：雙屬性需要將兩個倍率相乘。
+      </div>
+    </div>
+  </div>
+
+  <div class="card hidden" id="memoryCard">
+    <div class="toolbar memory-toolbar">
+      <div class="group memory-direction-group">
+        <div class="toolbar-label" data-i18n="memoryDirection">背誦方向</div>
+        <button class="mini-btn active" data-memory="attack" data-i18n="attackMode">攻擊方・克制強項</button>
+        <button class="mini-btn" data-memory="defense" data-i18n="defenseMode">防守方・屬性弱點</button>
+      </div>
+
+      <div class="group hidden" id="memoryTypeGroup">
+        <div class="toolbar-label" data-i18n="defenseTyping">防守屬性</div>
+        <button class="mini-btn active" data-memory-type="single" data-i18n="singleType">單屬性</button>
+        <button class="mini-btn" data-memory-type="dual" data-i18n="dualType">雙屬性</button>
+      </div>
+    </div>
+
+    <div class="memory-layout">
+      <div class="memory-focus">
+        <div class="memory-title" id="memoryTitle">防守方模式</div>
+        <div class="question-row memory-focus-row">
+          <span class="type-pill" id="focusTypePill"></span>
+          <span class="plus hidden" id="memoryPlusSign">＋</span>
+          <span class="type-pill hidden" id="focusTypePill2"></span>
+        </div>
+        <div class="memory-prompt" id="memoryPrompt"></div>
+      </div>
+
+      <div class="type-grid" id="memoryGrid"></div>
+
+      <div class="feedback" id="memoryFeedback"></div>
+
+      <div class="bottom-actions">
+        <button class="secondary-btn" id="revealBtn" data-i18n="revealAnswer">揭曉答案</button>
+        <button class="primary-btn hidden" id="nextMemoryBtn" data-i18n="nextCard">下一張</button>
+      </div>
+
+      <div class="legend" id="memoryLegend">
+        攻擊方模式：選出「這個攻擊屬性可對哪些防守屬性造成 2× 傷害」。<br>
+        防守方單屬性：選出所有 2× 弱點。<br>
+        防守方雙屬性：選出所有實際弱點，包括 2× 及 4×；兩個屬性的倍率可能互相抵銷。
+      </div>
+    </div>
+  </div>
+
+  <div class="card hidden" id="chartCard">
+    <div class="chart-head">
+      <div>
+        <div class="chart-kicker" data-i18n="chartKicker">TYPE CHART</div>
+        <h2 data-i18n="chartTitle">屬性相剋表</h2>
+        <div class="chart-sub" data-i18n="chartSub">先選擇一個屬性查看手機版速查；下方亦設有完整 18×18 相剋表。</div>
+      </div>
+    </div>
+
+    <div class="chart-type-grid" id="chartTypeGrid"></div>
+
+    <div class="chart-selected">
+      <div class="chart-selected-label" data-i18n="currentType">目前屬性</div>
+      <span class="type-pill" id="chartFocusPill"></span>
+    </div>
+
+    <div class="chart-columns">
+      <section class="chart-section">
+        <div class="chart-section-title">
+          <span class="chart-role-icon">⚔</span>
+          <div>
+            <b data-i18n="attacker">攻擊方</b>
+            <small data-i18n="useThisTypeToAttack">使用這個屬性攻擊</small>
+          </div>
+        </div>
+        <div id="chartAttackGroups"></div>
+      </section>
+
+      <section class="chart-section">
+        <div class="chart-section-title">
+          <span class="chart-role-icon">🛡</span>
+          <div>
+            <b data-i18n="defender">防守方</b>
+            <small data-i18n="thisTypeDefends">這個屬性受到攻擊</small>
+          </div>
+        </div>
+        <div id="chartDefenseGroups"></div>
+      </section>
+    </div>
+
+    <details class="matrix-details">
+      <summary data-i18n="showFullChart">查看完整 18×18 相剋表</summary>
+      <div class="matrix-legend">
+        <span><i class="legend-swatch x2"></i>2×</span>
+        <span><i class="legend-swatch xhalf"></i>½×</span>
+        <span><i class="legend-swatch x0"></i>0×</span>
+        <span data-i18n="blankIsNeutral">空白 = 1×</span>
+      </div>
+      <div class="matrix-wrap">
+        <table class="type-matrix" id="typeMatrix"></table>
+      </div>
+      <div class="matrix-axis-note" data-i18n="matrixAxis">左邊直列 = 攻擊方　／　上方橫列 = 防守方</div>
+    </details>
+  </div>
+</div>
+
+<script>
+const TYPES = [
+  "一般","火","水","電","草","冰","格鬥","毒","地面",
+  "飛行","超能力","蟲","岩石","幽靈","龍","惡","鋼","妖精"
+];
+
+const LANG_KEY = "pokemonTypeTrainerLang";
+
+const TYPE_NAMES = {
+  "zh-Hant":{
+    "一般":"一般","火":"火","水":"水","電":"電","草":"草","冰":"冰","格鬥":"格鬥","毒":"毒","地面":"地面",
+    "飛行":"飛行","超能力":"超能力","蟲":"蟲","岩石":"岩石","幽靈":"幽靈","龍":"龍","惡":"惡","鋼":"鋼","妖精":"妖精"
+  },
+  "en":{
+    "一般":"Normal","火":"Fire","水":"Water","電":"Electric","草":"Grass","冰":"Ice","格鬥":"Fighting","毒":"Poison","地面":"Ground",
+    "飛行":"Flying","超能力":"Psychic","蟲":"Bug","岩石":"Rock","幽靈":"Ghost","龍":"Dragon","惡":"Dark","鋼":"Steel","妖精":"Fairy"
+  },
+  "ja":{
+    "一般":"ノーマル","火":"ほのお","水":"みず","電":"でんき","草":"くさ","冰":"こおり","格鬥":"かくとう","毒":"どく","地面":"じめん",
+    "飛行":"ひこう","超能力":"エスパー","蟲":"むし","岩石":"いわ","幽靈":"ゴースト","龍":"ドラゴン","惡":"あく","鋼":"はがね","妖精":"フェアリー"
+  }
+};
+
+const I18N = {
+  "zh-Hant":{
+    appTitle:"屬性相剋訓練器",
+    subtitle:"以手機使用為主的 Pokémon 屬性訓練器：先進行背誦，再做隨機題，最後集中重溫錯題。",
+    modeMemory:"背誦模式", modeQuiz:"隨機出題", modeReview:"錯題重溫", modeChart:"相剋表",
+    statCorrect:"答對", statTotal:"總題數", statStreak:"連勝", statAccuracy:"命中率", statWrong:"錯題數",
+    memoryStats:"背誦統計", quizStats:"答題統計", reviewStats:"重溫統計",
+    tools:"工具", resetStats:"重設統計", clearWrong:"清空錯題",
+    quizType:"題目類型", singleType:"單屬性", dualType:"雙屬性", nextQuestion:"下一題",
+    memoryDirection:"背誦方向", attackMode:"攻擊方・克制強項", defenseMode:"防守方・屬性弱點",
+    defenseTyping:"防守屬性", revealAnswer:"揭曉答案", nextCard:"下一張",
+    reviewEmpty1:"目前這個題型沒有錯題可供重溫。",
+    reviewEmpty2:"你可以先到「隨機出題」練習數題，或切換至另一個題型。",
+    chartKicker:"TYPE CHART", chartTitle:"屬性相剋表",
+    chartSub:"先選擇一個屬性查看手機版速查；下方亦設有完整 18×18 相剋表。",
+    currentType:"目前屬性", attacker:"攻擊方", defender:"防守方",
+    useThisTypeToAttack:"使用這個屬性攻擊", thisTypeDefends:"這個屬性受到攻擊",
+    showFullChart:"查看完整 18×18 相剋表", blankIsNeutral:"空白 = 1×",
+    matrixAxis:"左側直列 = 攻擊方　／　上方橫列 = 防守方", matrixCorner:"攻↓ / 防→",
+    none:"沒有", correct:"答對！", notFullyCorrect:"未完全正確", yourChoice:"你的選擇：",
+    qHint:"判斷攻擊屬性對防守方會造成多少倍傷害",
+    qHintReview:"從錯題題庫抽題，答對後會自動移出",
+    weightedHint:(n)=>`錯題優先加權：這題之前答錯 ${n} 次`,
+    addedWrong:"已加入錯題重溫題庫。",
+    keepWrong:"這題仍會保留在錯題題庫。",
+    removedWrong:"已從錯題題庫移除。",
+    answerIs:"答案是",
+    memoryAttackTitle:"攻擊方模式・克制強項",
+    memoryDefenseSingleTitle:"防守方模式・單屬性弱點",
+    memoryDefenseDualTitle:"防守方模式・雙屬性弱點",
+    memoryAttackPrompt:(t)=>`請選出所有會被「${t}」攻擊屬性造成 2× 傷害的防守屬性。`,
+    memoryDefenseSinglePrompt:(t)=>`請選出所有會對「${t}」造成 2× 傷害的攻擊屬性。`,
+    memoryDefenseDualPrompt:(a,b)=>`請選出所有攻擊「${a}＋${b}」時會造成效果絕佳傷害的攻擊屬性（2× 或 4×）。`,
+    memoryAttackDesc:(t)=>`「${t}」作為攻擊方，會對以下防守屬性造成 2× 傷害：`,
+    memoryDefenseSingleDesc:(t)=>`「${t}」作為防守方，會被以下攻擊屬性造成 2× 傷害：`,
+    memoryDefenseDualDesc:(a,b)=>`「${a}＋${b}」作為防守方的實際弱點：`,
+    weakness4:"4× 弱點", weakness2:"2× 弱點", noWeakness:"沒有 2× / 4× 弱點",
+    noSelection:"（沒有選擇任何屬性）",
+    confirmReset:"確定要重設所有統計？", confirmClearWrong:"確定要清空錯題題庫？",
+    quizLegend:'單屬性答案：0× / 0.5× / 1× / 2×。<br>雙屬性答案：0× / 0.25× / 0.5× / 1× / 2× / 4×。<br>提示：雙屬性需要將兩個倍率相乘。',
+    memoryLegend:'攻擊方模式：選出「這個攻擊屬性可對哪些防守屬性造成 2× 傷害」。<br>防守方單屬性：選出所有 2× 弱點。<br>防守方雙屬性：選出所有實際弱點，包括 2× 及 4×；兩個屬性的倍率可能互相抵銷。',
+    toolNote:'1. 答錯次數越多，之後在隨機出題中出現的機率越高。<br>2. 有錯題時，隨機模式約有 65% 機會優先抽取錯題。<br>3. 答對錯題後，該題會自動移出錯題題庫。<br>4. 背誦模式分為「防守方弱點」及「攻擊方克制」。'
+  },
+  "en":{
+    appTitle:"Type Matchup Trainer",
+    subtitle:"A mobile-first Pokémon type trainer: memorize first, practice random questions, then review mistakes.",
+    modeMemory:"Memorize", modeQuiz:"Random Quiz", modeReview:"Mistake Review", modeChart:"Type Chart",
+    statCorrect:"Correct", statTotal:"Total", statStreak:"Streak", statAccuracy:"Accuracy", statWrong:"Mistakes",
+    memoryStats:"Memory Stats", quizStats:"Quiz Stats", reviewStats:"Review Stats",
+    tools:"Tools", resetStats:"Reset Stats", clearWrong:"Clear Mistakes",
+    quizType:"Question Type", singleType:"Single Type", dualType:"Dual Type", nextQuestion:"Next",
+    memoryDirection:"Study Direction", attackMode:"Attacker · Strong Against", defenseMode:"Defender · Weaknesses",
+    defenseTyping:"Defending Type", revealAnswer:"Reveal Answer", nextCard:"Next Card",
+    reviewEmpty1:"There are no mistakes to review for this question type.",
+    reviewEmpty2:"Try a few Random Quiz questions first, or switch question type.",
+    chartKicker:"TYPE CHART", chartTitle:"Type Matchup Chart", chartSub:"Pick a type for a quick mobile reference, or open the full 18×18 chart below.",
+    currentType:"Current Type", attacker:"Attacker", defender:"Defender",
+    useThisTypeToAttack:"Use this type to attack", thisTypeDefends:"When this type is defending",
+    showFullChart:"Show full 18×18 chart", blankIsNeutral:"Blank = 1×",
+    matrixAxis:"Left column = Attacker / Top row = Defender", matrixCorner:"ATK↓ / DEF→",
+    none:"None", correct:"Correct!", notFullyCorrect:"Not quite", yourChoice:"Your choices:",
+    qHint:"Choose the damage multiplier for this attacking type against the defender",
+    qHintReview:"Reviewing a mistake; answer correctly to remove it",
+    weightedHint:(n)=>`Weighted mistake review: missed ${n} time${n===1?"":"s"} before`,
+    addedWrong:"Added to Mistake Review.", keepWrong:"This question stays in Mistake Review.", removedWrong:"Removed from Mistake Review.",
+    answerIs:"Answer",
+    memoryAttackTitle:"Attacker · Strong Against",
+    memoryDefenseSingleTitle:"Defender · Single-Type Weaknesses",
+    memoryDefenseDualTitle:"Defender · Dual-Type Weaknesses",
+    memoryAttackPrompt:(t)=>`Select every defending type that takes 2× damage from ${t}.`,
+    memoryDefenseSinglePrompt:(t)=>`Select every attacking type that deals 2× damage to ${t}.`,
+    memoryDefenseDualPrompt:(a,b)=>`Select every attacking type that is super effective against ${a} + ${b} (2× or 4×).`,
+    memoryAttackDesc:(t)=>`${t} deals 2× damage to these defending types:`,
+    memoryDefenseSingleDesc:(t)=>`${t} takes 2× damage from these attacking types:`,
+    memoryDefenseDualDesc:(a,b)=>`True weaknesses of ${a} + ${b}:`,
+    weakness4:"4× Weakness", weakness2:"2× Weakness", noWeakness:"No 2× / 4× weaknesses",
+    noSelection:"(Nothing selected)",
+    confirmReset:"Reset all statistics?", confirmClearWrong:"Clear the entire mistake list?",
+    quizLegend:'Single-type answers: 0× / 0.5× / 1× / 2×.<br>Dual-type answers: 0× / 0.25× / 0.5× / 1× / 2× / 4×.<br>Tip: multiply the two type multipliers together.',
+    memoryLegend:'Attacker: select every defending type this attacking type hits for 2×.<br>Single-type defender: select all 2× weaknesses.<br>Dual-type defender: select all real weaknesses, including 2× and 4×; resistances can cancel weaknesses.',
+    toolNote:'1. Questions you miss more often are weighted more heavily in Random Quiz.<br>2. When mistakes exist, Random Quiz has about a 65% chance to draw from them first.<br>3. Correctly answering a mistake removes it from the review list.<br>4. Memorize mode separates attacker strengths from defender weaknesses.'
+  },
+  "ja":{
+    appTitle:"タイプ相性トレーナー",
+    subtitle:"スマホ向けのポケモンタイプ相性トレーナー。暗記 → ランダム問題 → 間違い復習の順で練習できます。",
+    modeMemory:"暗記", modeQuiz:"ランダム問題", modeReview:"間違い復習", modeChart:"相性表",
+    statCorrect:"正解", statTotal:"問題数", statStreak:"連続正解", statAccuracy:"正答率", statWrong:"間違い",
+    memoryStats:"暗記の記録", quizStats:"問題の記録", reviewStats:"復習の記録",
+    tools:"ツール", resetStats:"記録をリセット", clearWrong:"間違いを削除",
+    quizType:"問題タイプ", singleType:"単タイプ", dualType:"複合タイプ", nextQuestion:"次の問題",
+    memoryDirection:"暗記方向", attackMode:"攻撃側・弱点を突ける", defenseMode:"防御側・弱点",
+    defenseTyping:"防御タイプ", revealAnswer:"答えを見る", nextCard:"次へ",
+    reviewEmpty1:"この問題タイプには復習する間違いがありません。",
+    reviewEmpty2:"先に「ランダム問題」を解くか、別の問題タイプに切り替えてください。",
+    chartKicker:"TYPE CHART", chartTitle:"タイプ相性表", chartSub:"タイプを1つ選ぶとスマホ向けの早見表を表示します。下には18×18の完全版もあります。",
+    currentType:"選択中", attacker:"攻撃側", defender:"防御側",
+    useThisTypeToAttack:"このタイプで攻撃", thisTypeDefends:"このタイプで防御",
+    showFullChart:"18×18の完全版を見る", blankIsNeutral:"空白 = 1×",
+    matrixAxis:"左列 = 攻撃側 ／ 上段 = 防御側", matrixCorner:"攻↓ / 防→",
+    none:"なし", correct:"正解！", notFullyCorrect:"惜しい", yourChoice:"あなたの選択：",
+    qHint:"攻撃タイプが防御タイプに与えるダメージ倍率を選んでください",
+    qHintReview:"間違い問題を復習中。正解するとリストから削除されます",
+    weightedHint:(n)=>`間違い優先：この問題は以前 ${n} 回間違えています`,
+    addedWrong:"間違い復習に追加しました。", keepWrong:"この問題は間違い復習に残ります。", removedWrong:"間違い復習から削除しました。",
+    answerIs:"答え",
+    memoryAttackTitle:"攻撃側・弱点を突けるタイプ",
+    memoryDefenseSingleTitle:"防御側・単タイプの弱点",
+    memoryDefenseDualTitle:"防御側・複合タイプの弱点",
+    memoryAttackPrompt:(t)=>`${t}タイプの攻撃で2×になる防御タイプをすべて選んでください。`,
+    memoryDefenseSinglePrompt:(t)=>`${t}タイプに2×ダメージを与える攻撃タイプをすべて選んでください。`,
+    memoryDefenseDualPrompt:(a,b)=>`${a}＋${b}に「こうかは ばつぐん」（2×または4×）になる攻撃タイプをすべて選んでください。`,
+    memoryAttackDesc:(t)=>`${t}タイプの攻撃が2×になる防御タイプ：`,
+    memoryDefenseSingleDesc:(t)=>`${t}タイプが2×ダメージを受ける攻撃タイプ：`,
+    memoryDefenseDualDesc:(a,b)=>`${a}＋${b}の実際の弱点：`,
+    weakness4:"4× 弱点", weakness2:"2× 弱点", noWeakness:"2× / 4× の弱点なし",
+    noSelection:"（選択なし）",
+    confirmReset:"すべての記録をリセットしますか？", confirmClearWrong:"間違いリストをすべて削除しますか？",
+    quizLegend:'単タイプ：0× / 0.5× / 1× / 2×。<br>複合タイプ：0× / 0.25× / 0.5× / 1× / 2× / 4×。<br>ヒント：2つのタイプ倍率を掛け合わせます。',
+    memoryLegend:'攻撃側：この攻撃タイプで2×になる防御タイプを選びます。<br>防御側・単タイプ：2×弱点をすべて選びます。<br>防御側・複合タイプ：2×と4×の実際の弱点を選びます。耐性によって弱点が相殺されることがあります。',
+    toolNote:'1. 間違えた回数が多い問題ほど、ランダム問題で優先されます。<br>2. 間違いがある場合、約65%の確率で間違い問題が優先されます。<br>3. 間違い問題に正解すると復習リストから削除されます。<br>4. 暗記モードでは攻撃側の得意タイプと防御側の弱点を分けて練習します。'
+  }
+};
+
+let currentLang = localStorage.getItem(LANG_KEY) || (() => {
+  const lang = (navigator.language || "").toLowerCase();
+  if (lang.startsWith("ja")) return "ja";
+  if (lang.startsWith("en")) return "en";
+  return "zh-Hant";
+})();
+
+function tr(key){
+  return I18N[currentLang]?.[key] ?? I18N["zh-Hant"][key] ?? key;
+}
+
+function typeName(type){
+  return TYPE_NAMES[currentLang]?.[type] || type;
+}
+
+
+const COLORS = {
+  "一般":"#d7d6cb","火":"#ff5a52","水":"#4e95ff","電":"#f6c91d",
+  "草":"#54c243","冰":"#71d8ff","格鬥":"#ff9b2e","毒":"#b25ff1",
+  "地面":"#be7a36","飛行":"#8bbaff","超能力":"#ff5d96","蟲":"#a7bb25",
+  "岩石":"#c9c08d","幽靈":"#a35cb0","龍":"#7188ff","惡":"#7f6d6a",
+  "鋼":"#84c8e5","妖精":"#ee88f5"
+};
+
+const ICONS = {"一般":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGlkPSJub3JtYWxfc3ZnX19MYXllcl8xIiBkYXRhLW5hbWU9IkxheWVyIDEiIHZpZXdCb3g9IjAgMCAyNTYgMjU2Ij48dGl0bGU+bm9ybWFsPC90aXRsZT48ZGVmcz48c3R5bGU+Lm5vcm1hbF9zdmdfX2Nscy0ye2ZpbGw6IzgyODI4Mn08L3N0eWxlPjwvZGVmcz48Y2lyY2xlIGN4PSIxMjgiIGN5PSIxMjgiIHI9IjEyOCIgY2xhc3M9Im5vcm1hbF9zdmdfX2Nscy0yIi8+PHBhdGggZD0iTTEyOS43NiAyMDQuMDljLTUyLjE3LjEzLTg2LjYyLTQ5LjAxLTY5LjA1LTk2LjQzIDEuNTgtNC4yNiAyLjA2LTguMTguMy0xMi41NC00LjM1LTEwLjc2LTIuMTEtMjAuMzUgNi40LTI4LjEzIDguNi03Ljg2IDE4LjY1LTguNTYgMjguNzMtMy41NiA0LjExIDIuMDQgNy42NSAxLjc2IDExLjQ4LjY3IDEzLjQ1LTMuODQgMjYuODktMy44NiA0MC4zMS0uMDkgNS4wMSAxLjQxIDkuMjkuOSAxNC4zMS0xLjI0IDkuNzktNC4xNiAxOS41OS0zLjM1IDI3Ljc0IDQuNjQgOC4zNCA4LjE3IDkuOTIgMTcuODIgNS40OCAyOC4zMy0xLjcgNC4wMi0xLjg2IDcuNi0uMjkgMTEuNTIgMTMuNDUgMzMuNTItMS40NyA3MS42NC0zMy4zNSA4OC43NC0xMC40NyA1LjYyLTIxLjcyIDguMjEtMzIuMDUgOC4wOFoiIHN0eWxlPSJmaWxsOiNmZmYiLz48cGF0aCBkPSJNNzcuMjggMTMzLjE2Yy0xLjM0LTI2LjI2IDIxLjkzLTUxLjE5IDUwLjI0LTUxLjA5IDI4LjM2LjA5IDUwLjU1IDIyLjAyIDUxLjM1IDUwLjEzLjY4IDI0LjA1LTE5LjI4IDUwLjcyLTUwLjM5IDUxLjE2LTI3Ljk0LjQtNTEuMDctMjIuMjctNTEuMi01MC4yIiBjbGFzcz0ibm9ybWFsX3N2Z19fY2xzLTIiLz48L3N2Zz4=","火":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGRhdGEtbmFtZT0iTGF5ZXIgMSIgdmlld0JveD0iMCAwIDI1NiAyNTYiPjx0aXRsZT5maXJlPC90aXRsZT48Y2lyY2xlIGN4PSIxMjgiIGN5PSIxMjgiIHI9IjEyOCIgc3R5bGU9ImZpbGw6I2U0NjEzZSIvPjxwYXRoIGQ9Ik0xMDEuMTQgMTk2LjcxYy0xOC4wNC00Ljk3LTMyLjE1LTMzLjIzLTI2LjEyLTU2LjQ0IDIuNDctOS41IDYuNzMtMTguMDQgMTMuMTUtMjUuNDIgNS42Ny02LjUyIDExLjU2LTEyLjg2IDE3LjQ0LTE5LjE5IDE2LjQ1LTE3LjcyIDE2Ljg0LTIxLjg0IDMuNjctNDAuOTIgMTYuNjYtNi4zMyAzNS43OSA2LjgxIDM2LjI2IDI0Ljg3LjIzIDguOTItMy4xMiAxNi44NC02LjU1IDI0Ljc4LTIuODYgNi42MS0zLjk0IDEzLjIyIDEuNDYgMjEuNDYuNzgtNy43OC4yNS0xMy45OCA1LjE2LTE5LjEyIDUuNDQtNS43IDkuOTktNy42MSAxOC4yNi01Ljc0LTggNi41OC02Ljk3IDEwLjkgNi41MiAyOS45MiAxMi4zNCAxNy40MSAxNS43IDMyLjM1IDYuNiA0OC41NC05Ljc1IDE3LjM1LTMwLjg2IDI3Ljg4LTUwLjMxIDI0Ljk3IDEuMzItMi4xNSA1LTMuODkgNy43LTUuNDggMTIuOTUtNy42MSAxNC45MS0xOS41NCA0Ljk0LTMwLjcxLTMuMzEtMy43MS03LjA2LTcuMDQtMTAuNjgtMTAuNDctMTQuNzEtMTMuOTUtMTYuMzMtMTYuODMtMjAuMTItMzYuMjUtMjAuMDEgMTAuOTYtMjMuODcgNDYuNzUtNy4zOCA3NS4yM1oiIHN0eWxlPSJmaWxsOiNmZmYiLz48L3N2Zz4=","水":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGRhdGEtbmFtZT0iTGF5ZXIgMSIgdmlld0JveD0iMCAwIDI1NiAyNTYiPjx0aXRsZT53YXRlcjwvdGl0bGU+PGNpcmNsZSBjeD0iMTI4IiBjeT0iMTI4IiByPSIxMjgiIHN0eWxlPSJmaWxsOiMzMDk5ZTEiLz48cGF0aCBkPSJNMTI4LjM1IDIwNi4yNGMtMzQuMjQuMTMtNTYuMTQtMzIuMzktNDMuOC02NC43OCA0LjE4LTEwLjk4IDEwLjc4LTIwLjYgMTYuOC0zMC40OSA5LjQzLTE1LjUgMTUuNzEtMzIuMTEgMTkuOTEtNDkuNjMuNTQtMi4yNS45NC00LjU4IDEuODgtNi42Ni45My0yLjA3IDIuMTMtNC4yOSA1LjAyLTQuMTcgMi44My4xMiAzLjg0IDIuNDEgNC44NyA0LjQ0Ljc0IDEuNDUgMS4wOSAzLjEyIDEuNDEgNC43MyA0LjQ2IDIyLjEyIDEzLjkxIDQyLjA2IDI2LjA0IDYwLjkzIDcuNzcgMTIuMDggMTQuNDYgMjQuNTggMTQuMTMgMzkuNzUtLjU3IDI2LjQ4LTE5LjgyIDQ1Ljc5LTQ2LjI3IDQ1Ljg5WiIgc3R5bGU9ImZpbGw6I2ZmZiIvPjxwYXRoIGQ9Ik0xMjkuMTYgMTkzLjUxYy0xMy44LTEuMDUtMjUuNTctNC41My0zMi45Mi0xNi41My0xLjM1LTIuMi0zLjEzLTUuMDItMS43MS03LjQ0IDEuODgtMy4yMSA0LjczLS43MSA3LjAzLjA4IDE3Ljg4IDYuMTkgMzUuNyA2LjE3IDUzLjUyLS4yNyAyLjA2LS43NSA0LjMzLTIuNzMgNi4zNi0uNDMgMS45MiAyLjE4LjA1IDQuNDEtLjkyIDYuMzktNi41MiAxMy4zOS0xOC44NiAxNi40OS0zMS4zNSAxOC4xOVoiIHN0eWxlPSJmaWxsOiMzYTlkZTIiLz48L3N2Zz4=","電":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGRhdGEtbmFtZT0iTGF5ZXIgMSIgdmlld0JveD0iMCAwIDI1NiAyNTYiPjx0aXRsZT5lbGVjdHJpYzwvdGl0bGU+PGNpcmNsZSBjeD0iMTI4IiBjeT0iMTI4IiByPSIxMjgiIHN0eWxlPSJmaWxsOiNkZmJjMjgiLz48cGF0aCBkPSJNMTEyLjk0IDIwNS44N2MtNC4zNS0xLjA3LTMuMDktNC4yMS0yLjQxLTYuNDMgMy4wOC0xMC4xNSA2LjIxLTIwLjMgOS44Mi0zMC4yOCAyLjMzLTYuNDUgMS45Ni0xMC45NS00LjQ2LTE1LjItMTAuOC03LjE1LTIwLjgtMTUuNDgtMzEuMzYtMjMtNi42MS00LjcxLTcuOTItMTAuMDMtMy44LTE3LjAyIDExLjY0LTE5Ljc0IDIzLjIyLTM5LjQ5IDM2LjY4LTU4LjEgNS4xNS03LjEyIDEwLjI3LTguMTEgMTcuNjUtMy41MyAxMS44MiA3LjM0IDIzLjkxIDE0LjI1IDM2LjA0IDIxLjA3IDcuMDkgMy45OSA3LjU5IDguMTUgMi4wNiAxNC4wNi04LjE5IDguNzQtMTUuNjIgMTguMi0yNC4wMiAyNi43My01LjIzIDUuMzEtNC4xMyA4Ljc2Ljk0IDEyLjkzIDYuNDEgNS4yOCAxMi41MiAxMC45NCAxOC43NCAxNi40NiAzLjY4IDMuMjcgNC4wNCA2LjU2LjI0IDEwLjEzLTE3LjcgMTYuNjQtMzUuMzUgMzMuMzMtNTMuMDQgNDkuOTgtLjk0Ljg5LTIuMTIgMS41My0zLjA4IDIuMjFaIiBzdHlsZT0iZmlsbDojZmZmIi8+PC9zdmc+","草":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGlkPSJncmFzc19zdmdfX0xheWVyXzEiIGRhdGEtbmFtZT0iTGF5ZXIgMSIgdmlld0JveD0iMCAwIDI1NiAyNTYiPjx0aXRsZT5ncmFzczwvdGl0bGU+PGRlZnM+PHN0eWxlPi5ncmFzc19zdmdfX2Nscy0xe2ZpbGw6I2ZmZn08L3N0eWxlPjwvZGVmcz48Y2lyY2xlIGN4PSIxMjgiIGN5PSIxMjgiIHI9IjEyOCIgc3R5bGU9ImZpbGw6IzQzOTgzNyIvPjxwYXRoIGQ9Ik0xOTQuMyA4Ni4xMmMyLjItMi4xMyAxLjc2IDQuMiAxLjUyIDYuMTUtNC4wNyAzMi42MS04Ljk3IDY1LjA4LTE2LjE1IDk3LjE2LTEuOTIgOC42MS0zLjMzIDkuNzEtMTIuMSA5Ljg0LTkuNjguMTQtMTkuMzUuMDYtMjguOTUuMDQtMS43IDAtMi44NS0xLjczLTIuMi0zLjMgMTUuOTQtMzguMTEgMzcuMzQtOTAuMDMgNTcuODgtMTA5Ljg5IiBjbGFzcz0iZ3Jhc3Nfc3ZnX19jbHMtMSIvPjxwYXRoIGQ9Ik0xMjEuNDcgMTgwLjY0Yy0uODMtMjMuNzQgMi4wNS0zNy4xNiA1LjAxLTY4LjY2LjEyLTEuMzIuNTktMi41NyAxLjE1LTMuNzcgMy41My03LjQ4IDE3LjM0LTM2LjI0IDI1LjM2LTQ2LjE3IDEuNjgtMi4wOCA1LjAxLS45NSA1LjE4IDEuNzEuMTEgMS43OC4wNCAzLjQ0LS4wMyA1LjIyLS44OSAyMC4zMS0zLjI5IDQwLjQ5LTYuMTkgNjAuNi0uNTYgMy44Ni0yLjIyIDcuNjgtMy45NyAxMS4yMy01LjczIDExLjYyIDEuMDgtMi4yOC0xNy43NiAzNC41Ny0xLjE5IDIuMzQtMi4xMiA1LjMtNC4zMyA2Ljk4LTEuOCAxLjM3LTQuMzQuNTUtNC40Mi0xLjdaIiBjbGFzcz0iZ3Jhc3Nfc3ZnX19jbHMtMSIvPjxwYXRoIGQ9Ik0xMTYuODIgODYuMTJjMi4yLTIuMTMgMS43NiA0LjIgMS41MiA2LjE1LTQuMDcgMzIuNjEtOC45NyA2NS4wOC0xNi4xNSA5Ny4xNi0xLjkyIDguNjEtMy4zMyA5LjcxLTEyLjEgOS44NC05LjY4LjE0LTE5LjM1LjA2LTI4Ljk1LjA0LTEuNyAwLTIuODUtMS43My0yLjItMy4zIDE1Ljk0LTM4LjExIDM3LjM0LTkwLjAzIDU3Ljg4LTEwOS44OSIgY2xhc3M9ImdyYXNzX3N2Z19fY2xzLTEiLz48L3N2Zz4=","冰":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGRhdGEtbmFtZT0iTGF5ZXIgMSIgdmlld0JveD0iMCAwIDI1NiAyNTYiPjx0aXRsZT5pY2U8L3RpdGxlPjxjaXJjbGUgY3g9IjEyOCIgY3k9IjEyOCIgcj0iMTI4IiBzdHlsZT0iZmlsbDojNDdjOGM4Ii8+PHBhdGggZD0iTTExMC4zNiA2MC42MWM2LjA1LTUuODggMTEuNC0xMS4wOSAxNy43Ny0xNy4yOSA1Ljk3IDYuMTMgMTEuMTcgMTEuNDcgMTcuMTQgMTcuNTktNC45MiA1Ljc5LTkuMzEgMTAuOTYtMTQuNzQgMTcuMzYgMTIuOCA3LjQ0IDI2LjQgMTYuMzIgNDAuMDcgMjQuMjdWNzkuMjhoMjQuMDFjMCA3LjgxLjA5IDE2LjY4LjA5IDI1LjMzLTIxLjcgMC01LjY1LjI2LTIyLjI0LjI2IDAgMTUuMzYuNDQgMzEuNTMuNDQgNDcuNTFoMjEuNzl2MjQuMThoLTIzLjk0di0yMS44OGMtMTMuMjIgNy41Ni0yNy4wNiAxNS4zNC00MC4zOCAyMi45NSA1LjEzIDUuOSA5LjQgMTAuNzkgMTQuOSAxNy4xMS01LjM3IDUuNjYtMTAuNjYgMTEuMjMtMTcuMzYgMTguMjktNS45Ni02LjM5LTExLjIxLTEyLjAyLTE3LjEyLTE4LjM2IDQuOTgtNS43IDkuNDQtMTAuOCAxNC44NC0xNi45Ny0xMy4yNS03LjYxLTI3LTE1LjM1LTQwLjM3LTIzLjAzdjIyLjIySDYxLjIxdi0yNC40NmgyMi4wM2MwLTE1LjU2LS4wOC0zMi44OS0uMDgtNDguODZsLTIyLjA1LS4wOFY3OS4yN2gyNC4yMnYyMS4yNGMxMy4wOS03LjQxIDI2LjY5LTE0LjMyIDQwLjE2LTIxLjk1LTUuMDMtNS45Ni05LjM4LTExLjEyLTE1LjE1LTE3Ljk1WiIgc3R5bGU9ImZpbGw6I2ZiZmRmZCIvPjxwYXRoIGQ9Ik05Ni40NiAxNDAuNzl2LTMyLjA2YzEyLjU1LTcuMTYgMTIuNTUtNi44MSAyNy4yNy0xNS4wM2w2LjAzIDcuOTNjLTIyLjY0IDEyLjgyLjcxLS4yOS0yMi42NCAxMi44MnYyNi4zNHoiIHN0eWxlPSJmaWxsOiM2NGNmY2YiLz48L3N2Zz4=","格鬥":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGlkPSJmaWdodGluZ19zdmdfX0xheWVyXzEiIGRhdGEtbmFtZT0iTGF5ZXIgMSIgdmlld0JveD0iMCAwIDI1NiAyNTYiPjx0aXRsZT5maWdodGluZzwvdGl0bGU+PGRlZnM+PHN0eWxlPi5maWdodGluZ19zdmdfX2Nscy0xe2ZpbGw6I2ZmZn08L3N0eWxlPjwvZGVmcz48Y2lyY2xlIGN4PSIxMjgiIGN5PSIxMjgiIHI9IjEyOCIgc3R5bGU9ImZpbGw6I2U0OTAyMSIvPjxwYXRoIGQ9Ik0xODcuMzcgMTU1LjQ2Yy41NS4xOC45NS43MSAxLjAxIDEuMjkgMS43NCAxNi43MS0uMTIgMTkuNTYtMTUuMDUgMjUuMjgtMTguMzIgNy4wMS0zNy4wOSAxMi40Ny01Ni4yOCAxNi42MS02LjQ5IDEuNC0xMi44MiAxLjIzLTE4LjU1LTEuNTYtOS41NS00LjY2LTE4LjQzLTEwLjU4LTI2Ljc5LTE3LjE4LTIuOS0yLjI5LTQuMzUtNS4yNS00LjQ1LTguOTItLjE2LTUuOTYuMzItMTEuOTQgMC0xNy45LS4yOS01LjMgMS43LTguMjYgNy4wMS04LjI1IDEzLjk4LjAyIDI3Ljk2IDAgNDEuOTQuMDcgMi43My4wMSA1LjY5LjM5IDYuMTcgMy43Ni44NSA2LjA3IDUuMTYgNiA5LjY0IDYgMTQuOTgtLjAyIDI5Ljk2LS4wMiA0NC45NC4wNCAzLjM0LjAxIDYuNzQtLjQgMTAuNC43N1oiIGNsYXNzPSJmaWdodGluZ19zdmdfX2Nscy0xIi8+PHBhdGggZD0iTTY2Ljc5IDk3YzAtNy42NS0uMTctMTUuMzEuMDUtMjIuOTYuMjMtOC4yNSAxLjI5LTkuMTYgOS4yOS05LjQ5IDEyLjM1LS41MiAxMy41NS42MiAxMy41NyAxMy4yNC4wMyAxNC4zMS4xMSAyOC42Mi0uMDUgNDIuOTItLjEgOC42LTIuMTQgMTAuNDEtMTAuNzEgMTAuNTktOS4yNy4xOC0xMS44Mi0xLjgzLTEyLjA4LTEwLjM0LS4yNC03Ljk4LS4wNS0xNS45Ny0uMDUtMjMuOTZ6IiBjbGFzcz0iZmlnaHRpbmdfc3ZnX19jbHMtMSIvPjxwYXRoIGQ9Ik0xNjIuOSAxNDYuNTVjLTYuNjUgMC0xMy4zMS0uMDQtMTkuOTYuMDEtNi4xMi4wNS05LjI4LTIuOTUtOS40NC05LjA0LS4wOS0zLjMyLS4yMy02LjY2IDAtOS45Ny4zNi01LjM5IDMuMTUtOC43MyA4LjgxLTguNzYgMTMuNjQtLjA4IDI3LjI4LjAxIDQwLjkxLS4wNCA0LjIyLS4wMiA1LjU4IDIuMDggNi4wMyA2LjEgMi4zMiAyMC43MiAxLjQ4IDIxLjc3LTE5LjM2IDIxLjc3aC02Ljk5eiIgY2xhc3M9ImZpZ2h0aW5nX3N2Z19fY2xzLTEiLz48cGF0aCBkPSJNMTIyLjc5IDk4LjE1YzAgNy45OC4yNSAxNS45Ni0uMDcgMjMuOTMtLjMgNy4zNy0yLjc0IDkuMTQtMTEuMTMgOS4yMS04LjcuMDctMTEuMzUtMS41LTExLjUtOC43OC0uMzYtMTYuNjEtLjA5LTMzLjIzLS4xNS00OS44NS0uMDItNS45OCAzLjAxLTguNDEgOC43Mi04LjExIDEuMzMuMDcgMi42Ni0uMDQgMy45OSAwIDguODUuMjEgOS45MSAxLjA4IDEwLjEzIDkuNjcuMiA3Ljk3LjA0IDE1Ljk1LjA0IDIzLjkzeiIgY2xhc3M9ImZpZ2h0aW5nX3N2Z19fY2xzLTEiLz48cGF0aCBkPSJNMTg5LjIgODcuNzd2MTYuOTFjMCA0LjA1LTEuOSA2LjE4LTYuMTEgNS45My0uNjYtLjA0LTEuMzMgMC0xLjk5LjAzcS0xNC44NS42MS0xNC44Ni0xNC4wOGMwLTcuMy0uMS0xNC42LjA0LTIxLjg5LjE3LTkuMDcgMS4yNi0xMC4wNCAxMC41Ny0xMC4yIDEuNjYtLjAzIDMuMzIuMDcgNC45Ny4wNSA0Ljk0LS4wNSA3LjMzIDIuNDkgNy4zNyA3LjMyLjA0IDUuMzEgMCAxMC42MSAwIDE1LjkyWiIgY2xhc3M9ImZpZ2h0aW5nX3N2Z19fY2xzLTEiLz48cGF0aCBkPSJNMTU2LjEgODguMDljMCA1LjMzLS4xIDEwLjY2LjAzIDE1Ljk5LjEyIDQuNjgtMi4wNSA2LjQ4LTYuNjQgNi41MS0xOS4zMS4xMi0xNi4wNi42Mi0xNi4zNC0xNC43Ny0uMTQtNy42Ni4xMS0xNS4zMy4wMy0yMi45OS0uMDYtNS45IDIuNzYtOC41NiA4LjU5LTguMjkgMi4zMy4xMSA0LjY2LjA2IDYuOTkuMDUgNS4wMy0uMDEgNy4yMyAyLjcyIDcuMjYgNy41LjAzIDUuMzMgMCAxMC42NiAwIDE1Ljk5aC4wNloiIGNsYXNzPSJmaWdodGluZ19zdmdfX2Nscy0xIi8+PC9zdmc+","毒":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGlkPSJwb2lzb25fc3ZnX19MYXllcl8xIiBkYXRhLW5hbWU9IkxheWVyIDEiIHZpZXdCb3g9IjAgMCAyNTYgMjU2Ij48dGl0bGU+cG9pc29uPC90aXRsZT48ZGVmcz48c3R5bGU+LnBvaXNvbl9zdmdfX2Nscy0xe2ZpbGw6I2ZmZn08L3N0eWxlPjwvZGVmcz48Y2lyY2xlIGN4PSIxMjgiIGN5PSIxMjgiIHI9IjEyOCIgc3R5bGU9ImZpbGw6IzkzNTRjYiIvPjxjaXJjbGUgY3g9IjE1OS4zNyIgY3k9IjEyMy4yIiByPSIxNi44IiBjbGFzcz0icG9pc29uX3N2Z19fY2xzLTEiLz48Y2lyY2xlIGN4PSIxMDIuNDUiIGN5PSI4Ni42IiByPSIyOC4yIiBjbGFzcz0icG9pc29uX3N2Z19fY2xzLTEiLz48cGF0aCBkPSJNMTk3LjQ1IDE5MS41NWMyLjM2LTEuNSAzLjEyLTMuMDggMy4yOC00LjkxLjA1LS4zOC4wOC0uNzcuMDgtMS4xOCAwLS4yNy0uMDMtLjUyLS4wNi0uNzYtLjE2LTIuNy0xLjI2LTQuNTQtOC4yMy02LjgxYTkyIDkyIDAgMCAwLTMuOTctMS4xN2MtNy45LTIuMzctMTUuNTYtMy43OC0yNC4yNC00LjUzLTMuNDMtLjQ0LTYuOTktLjg0LTEwLjYzLTEuMTgtMS43MS0uNTItMi4zMS0xLjI4LTIuNzItMi40NGEyMy4zIDIzLjMgMCAwIDAtMy4xOS04LjE1Yy0zLjc5LTYuNDktOS44NC0xMC4yNS0xNy44Mi0xMC44Mi0uNDktLjA0LS45OC0uMDctMS40OC0uMDhIMTI4Yy0uMjcgMC0uNTMuMDEtLjguMDItOS4yNC4xNy0xNi4xOCA0LjY0LTE5Ljk5IDEyLjctLjYyIDEuMjItMS4xNSAyLjQ5LTEuNTUgMy44Mi0uOTMgMi40Ny0xLjU5IDMuOTctMy42MyA0Ljg2LTQuOTIuNDItOS42NS45NS0xNC4xIDEuNTctNC4yOC40Ni04LjUxIDEuMjEtMTIuNyAyLjE3LTUuNSAxLjE0LTEwLjE3IDIuNDMtMTMuNzMgMy44LS41My4xOS0xLjA0LjQtMS41NC42My00LjI2IDEuOS00LjYzIDMuNjctNC42NiA1Ljg4LS4wMi4yNi0uMDUuNTItLjA0LjggMCAuMTYuMDMuMzEuMDQuNDcuMDYgMi41My43MiA0LjU2IDUuNzEgNi42NC45NC40MSAxLjkzLjc2IDIuOTQgMS4wOCAxLjY1LjU1IDMuNDggMS4wOCA1LjQ4IDEuNTkgOC40NiAyLjI5IDE3LjAyIDMuNTcgMjUuNjIgNC4zNyAxMC4yMiAxLjEzIDIxLjUyIDEuNzkgMzIuODcgMS44aC4xYzEwLjQ3IDAgMjAuOTktLjU5IDMwLjY1LTEuNTkgMTAuMTUtLjg0IDIwLjItMi4zIDMwLjA4LTUuMThxLjY5LS4xOTUgMS4zNS0uMzljLjA5LS4wMy4xNy0uMDUuMjYtLjA4IDIuMjktLjcxIDQuNzktMS40OSA2Ljc2LTIuNzMuMDgtLjA1LjE2LS4xLjI1LS4xNS4wMi0uMDIuMDUtLjAzLjA3LS4wNVoiIGNsYXNzPSJwb2lzb25fc3ZnX19jbHMtMSIvPjwvc3ZnPg==","地面":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGlkPSJncm91bmRfc3ZnX19MYXllcl8xIiBkYXRhLW5hbWU9IkxheWVyIDEiIHZpZXdCb3g9IjAgMCAyNTYgMjU2Ij48dGl0bGU+Z3JvdW5kPC90aXRsZT48ZGVmcz48c3R5bGU+Lmdyb3VuZF9zdmdfX2Nscy0xe2ZpbGw6I2ZmZn08L3N0eWxlPjwvZGVmcz48Y2lyY2xlIGN4PSIxMjgiIGN5PSIxMjgiIHI9IjEyOCIgc3R5bGU9ImZpbGw6I2E0NzMzYyIvPjxwYXRoIGQ9Ik0xMjYuMjMgMTg0Ljg0Yy0yLjUyLS43Ny02LjQtMS42Ni0xMC4wNi0zLjEyLTE2LjkzLTYuNzctMzMuOC0xMy42OC01MC42OC0yMC41OS0xLjUyLS42Mi0yLjk0LTEuNTQtNC4zNy0yLjM3LTcuNDItNC4zLTcuNy05LjIxLS4yLTEyLjg2IDIwLjU4LTEwLjAxIDQxLjk0LTE4LjEyIDYzLjYxLTI1LjQzIDIuNjYtLjkgNS4xNS0uNiA3Ljc3LjI5IDIxLjAzIDcuMTQgNDEuNzMgMTUuMDggNjEuNzggMjQuNjUuOS40MyAxLjkxLjY4IDIuNzEgMS4yMyA0LjgxIDMuMzUgNC45OCA4LjEyLS4wOCAxMS4xMi00LjU0IDIuNjktOS41MiA0LjY2LTE0LjQgNi43My0xNi4xNiA2Ljg2LTMyLjM0IDEzLjctNDkgMTkuMy0xLjkxLjY0LTMuNzIgMS4zNy03LjA5IDEuMDRaIiBjbGFzcz0iZ3JvdW5kX3N2Z19fY2xzLTEiLz48cGF0aCBkPSJNMTI3LjU2IDIwOS45M2MtNC4yIDAtMTYuMTItNC4xNi0yMy44My03LjAxLTE0LjYyLTUuNDEtMjkuMDMtMTEuNDgtNDMuMjMtMTcuOTYtLjY3LS4zLTMuNTYtMS45OS01LjE5LTIuOTQtNS4wNC0yLjktNS40MS0zLjc0LTIuNTctOS4yNSAxLjktMy42OCAyLjctMy4zMSA3Ljc1LS45OSAxNi4wMSA3LjMyIDMyLjM4IDEzLjY3IDQ4LjcxIDIwLjE1czIxLjA5IDYuODcgMzcuNTIuMDRjMTUuOTEtNi42MSAzMS42OC0xMy41NCA0Ny44LTE5LjczIDQuODctMS44NyA2Ljg4LTMuODYgOS4xNCAxLjMzIDEuODEgNC4xNSAzLjgzIDUuNTMtMy43NiA4Ljg0LTE2Ljc0IDcuMzEtMzMuMDcgMTUuNDUtNTAuMzYgMjEuMzYtNy4yIDIuNDYtMTcuMjMgNi4xNS0yMS45OCA2LjE1WiIgY2xhc3M9Imdyb3VuZF9zdmdfX2Nscy0xIi8+PHBhdGggZD0iTTkzLjU5IDcxLjE5cTAgMTQuMjQtMTQuMSAxNC4yM2MtMS4zMyAwLTIuNjUuMDItMy45OC0uMDItOC43OC0uMjgtOS4yNi0uNzgtOS41Mi05Ljk3cS0uNTEtMTguMDQgMTcuNjgtMTcuNjNjOS40NC4yMiA5Ljc2LjU0IDkuOTIgMTAuNC4wMi45OSAwIDEuOTkgMCAyLjk4WiIgY2xhc3M9Imdyb3VuZF9zdmdfX2Nscy0xIi8+PHBhdGggZD0iTTE4NS4zIDg3LjcyYy0uMTQgMTAuMTctLjM0IDEwLjM0LTExLjk5IDEwLjI1LTEwLS4wOC0xMC4yNC0uMzctMTAuMTQtMTIuMDYuMDktMTAuMTguMzUtMTAuNDEgMTEuOTUtMTAuMjQgMTAuMTQuMTUgMTAuMzQuMzggMTAuMTggMTIuMDUiIGNsYXNzPSJncm91bmRfc3ZnX19jbHMtMSIvPjxwYXRoIGQ9Ik0xMTkuMzggOTkuNTRjLjA0IDguMDktMS4wNCA5LjE3LTkuMTMgOS4xOC04LjE5IDAtOS40Ni0xLjIxLTkuNDItOC45OS4wNC03LjYuOTktOC40MSA5Ljc4LTguMzYgOC4xNi4wNSA4Ljc0LjU5IDguNzggOC4xNloiIGNsYXNzPSJncm91bmRfc3ZnX19jbHMtMSIvPjwvc3ZnPg==","飛行":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGRhdGEtbmFtZT0iTGF5ZXIgMSIgdmlld0JveD0iMCAwIDI1NiAyNTYiPjx0aXRsZT5mbHlpbmc8L3RpdGxlPjxjaXJjbGUgY3g9IjEyOCIgY3k9IjEyOCIgcj0iMTI4IiBzdHlsZT0iZmlsbDojNzRhYWQwIi8+PHBhdGggZD0iTTE1MS43OCAxNDguNDNjLTE1LjcyIDE4LjY2LTM2LjcyIDE4LjU0LTU2LjgyIDIwLjQ5LS44OC4wOS0xLjcyLjQ2LTIuMzYgMS4wOS0xMC4yNyAxMC4wOS0xNS44NCAyNC4xMy0yOCAzMy42NC0uNTUuNDMtMS4zOS4yLTEuNjMtLjQ1LTIuMjUtNi4wOS0xLjU3LTExLjQtLjgxLTE2LjM5IDQuMjYtMjguMDIgMTEuMTMtNTUuNCAyMS44OC04MS42NiA1LjgzLTE0LjIzIDE1LjEzLTI0LjUxIDMxLjU5LTI3LjIgMjQuMzYtMy45OCA0Ny4zMy0xMy4wMyA3MC41OC0yMC45NyAyLjk2LTEuMDEgNi4wNS0xLjk2IDkuMTMtLjc2Ljk3LjM4IDEuNzQgMS4xOCAyLjAyIDIuMTguOTEgMy4yNS0uOTIgNS44OS0yLjU0IDguNjgtMTMuNSAyMy4zNi0zNC4yNSAzNy41MS01OC45MiA0Ni44MS0zLjU0IDEuMzMtNy45IDIuODEtMTAuOTEgNS42MS0uMzIuMy0uMDguODYuMzUuODggMTcuNDguNzQgMzIuNzYtNS43IDQ4LjgyLTkuMjQuNTUtLjEyIDEuMDQuNDUuODQuOTgtNy4wNSAxNy45NC0yMy43OSAyNi45OS0zOS45IDMyLjE1LTYuMyAyLjAyLTkuMzUgMi40Ni0yMC4zMyAzLjQ2LS4zNy4wMy0uNDEuNDktLjExLjU3IDE1Ljg3IDQgMjEuNzgtLjU1IDM2LjM0LTEuNTUuODMtLjA2IDEuMyAxLjAyLjc3IDEuNjZaIiBzdHlsZT0iZmlsbDojZmZmIi8+PC9zdmc+","超能力":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGRhdGEtbmFtZT0iTGF5ZXIgMSIgdmlld0JveD0iMCAwIDI1NiAyNTYiPjx0aXRsZT5wc3ljaGljPC90aXRsZT48Y2lyY2xlIGN4PSIxMjgiIGN5PSIxMjgiIHI9IjEyOCIgc3R5bGU9ImZpbGw6I2U5NmM4YyIvPjxwYXRoIGQ9Ik0xOTcuNDUgOTkuNzRjLjI5IDUuMjUtMi4wMSA5Ljc1LTQuMzkgMTQuMTMtNSA5LjIxLTQuOTIgMTguMTktLjM3IDI3LjY2IDEwLjIzIDIxLjMgMy42MiAzMy40MS0xOS41OSAzNS41Ny0xMS4xNiAxLjA0LTE5LjIyIDUuNjUtMjUuNDEgMTUuMTEtMTEuNzEgMTcuOS0yNy43MSAxNy43Ny0zOS41Ni0uMjUtNS45OC05LjA5LTEzLjc2LTEzLjczLTI0LjU1LTE0Ljc5LTI0LjA3LTIuMzYtMzAuNTQtMTMuOTktMjAuMTQtMzUuOTIgNC4zMi05LjEyIDQuMjItMTcuNy0uMTQtMjYuNzktMTAuMjEtMjEuMzEtMy42Mi0zMy40MSAxOS41OS0zNS41NyAxMS4xNS0xLjA0IDE5LjIzLTUuNjUgMjUuNDEtMTUuMTEgMTEuNDktMTcuNTggMjcuODMtMTcuOTQgMzguOTUtLjU0IDcuMDkgMTEuMDkgMTYuNzMgMTUuMDcgMjkuMTMgMTYuMDMgMTMuOSAxLjA4IDIxLjE3IDguNzUgMjEuMDYgMjAuNDhaIiBzdHlsZT0iZmlsbDojZmZmIi8+PHBhdGggZD0iTTE3NC41NyAxNTQuNjZjLTIwLjc4IDEuODItMzUuNDUgOS45Ni00Ni4zNyAyNi45LTExLjU1LTE2LjY3LTI2LTI1LjIxLTQ1LjctMjYuODEgNi45OS0xNy44NyA4Ljc1LTM0Ljk2LS44NS01MyAxOS45LTIuMzMgMzQuOTctMTAuMzYgNDYuNC0yNi45NiAxMS4zIDE2LjMgMjUuNzQgMjQuODQgNDUuNDQgMjYuNDQtNi45NCAxNy44OC04Ljc3IDM0Ljk2IDEuMDggNTMuNDJaIiBzdHlsZT0iZmlsbDojZTk2YzhkIi8+PC9zdmc+","蟲":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGlkPSJidWdfc3ZnX19MYXllcl8xIiBkYXRhLW5hbWU9IkxheWVyIDEiIHZpZXdCb3g9IjAgMCAyNTYgMjU2Ij48dGl0bGU+YnVnPC90aXRsZT48ZGVmcz48c3R5bGU+LmJ1Z19zdmdfX2Nscy0xe2ZpbGw6I2ZmZn08L3N0eWxlPjwvZGVmcz48Y2lyY2xlIGN4PSIxMjgiIGN5PSIxMjgiIHI9IjEyOCIgc3R5bGU9ImZpbGw6IzlmOWYyOCIvPjxwYXRoIGQ9Ik01Ny44NCAxNDQuNzFjLS4wMS0xNy40IDEuNi0yOC44NSA2LjM5LTM5LjY4IDMuODEtOC42MyA4LjE0LTEwLjEyIDE1LjE4LTQuNTQgOS41NiA3LjU3IDIwLjEzIDEyLjcxIDMyIDE1LjM1IDYuNCAxLjQzIDguODUgNS4xOCA2LjczIDExLjc0LTcuMjMgMjIuMzktMTQuNDkgNDQuNzgtMjEuNCA2Ny4yNy0yLjM4IDcuNzMtNS45NiA3LjQ3LTExLjQ4IDMuMjdDNjUuNyAxODMuMjMgNTggMTYyLjkgNTcuODQgMTQ0LjcxIiBjbGFzcz0iYnVnX3N2Z19fY2xzLTEiLz48cGF0aCBkPSJNMTk4LjE4IDE0MC4yOGMtLjIgMjIuNDMtNy43OSA0MS42Mi0yNS4yMSA1Ni4yNS04LjUxIDcuMTQtMTEuMTUgNi4zMy0xNC4zOS0zLjgtNi43NS0yMS4xNS0xMy4xNy00Mi40MS0yMC4xOC02My40OC0yLjYxLTcuODMtLjc5LTExLjkyIDcuMzgtMTMuNzEgMTEuMTctMi40NSAyMS4xOC03LjQ1IDMwLjIxLTE0LjU4IDcuNzEtNi4wOSAxMS44Ni00LjgyIDE1Ljg2IDQuMjkgNC45MSAxMS4xNyA2LjMzIDIyLjk4IDYuMzMgMzUuMDJaIiBjbGFzcz0iYnVnX3N2Z19fY2xzLTEiLz48cGF0aCBkPSJNMTI3LjkxIDEwNS4wM2MtMTUuNDIuNDItMjguNy00Ljc2LTQwLjU2LTE0LjEtNi4xNy00Ljg1LTcuMDctOS4zNC0xLjA3LTE1LjUzIDIzLjc2LTI0LjU0IDU5LjA0LTI0LjY2IDgzLjEzLS4zNCA2LjQ1IDYuNTEgNS40MiAxMS4xNi0xLjE1IDE2LjIyLTExLjk2IDkuMi0yNS4yNyAxNC4zMS00MC4zNCAxMy43NVoiIGNsYXNzPSJidWdfc3ZnX19jbHMtMSIvPjxwYXRoIGQ9Ik0xMjguNCAxNzkuMDhjNC4wMy0uMjIgNy42NS0uMzcgMTEuMjctLjY0IDQuNzUtLjM1IDYuMTggMi42IDcuMDEgNi41NC44NCAzLjk3LS41MyA2LjI5LTQuMzkgNy40My05LjQxIDIuNzgtMTguNzkgMi43Mi0yOC4yMi4xMy00LjQtMS4yMS01LjU5LTMuODQtNC42My04LjE3Ljk0LTQuMjMgMy4wNS02LjMyIDcuNTMtNS45MiAzLjk0LjM1IDcuODkuNDQgMTEuNDQuNjNaIiBjbGFzcz0iYnVnX3N2Z19fY2xzLTEiLz48cGF0aCBkPSJNMTI3Ljg5IDE3MC43M2MtNC44Ni0uOS0xMi4wMSAxLjQ1LTExLjY2LTcgLjMxLTcuNDUgNS4yOC05LjIzIDEyLjQzLTkuMjEgNy4yMS4wMiAxMS4wNSAzIDExLjEgOS41Mi4wNyA4LjM3LTcuMTYgNS43MS0xMS44NiA2LjY5WiIgY2xhc3M9ImJ1Z19zdmdfX2Nscy0xIi8+PC9zdmc+","岩石":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGRhdGEtbmFtZT0iTGF5ZXIgMSIgdmlld0JveD0iMCAwIDI1NiAyNTYiPjx0aXRsZT5yb2NrPC90aXRsZT48Y2lyY2xlIGN4PSIxMjgiIGN5PSIxMjgiIHI9IjEyOCIgc3R5bGU9ImZpbGw6I2E5YTQ4MSIvPjxwYXRoIGQ9Im0xOTkuNjcgOTguMjMtMTkuNjItMTkuNjIgMy41NSAyMy4zOGEuMi4yIDAgMCAxLS4zNC4xN2wtMjkuMTgtMjkuMThhLjIuMiAwIDAgMSAuMTctLjM0bDIzLjM4IDMuNTUtMTkuODctMTkuODdzLS4wOS0uMDYtLjE0LS4wNkg5OC4zNmMtLjA1IDAtLjEuMDItLjE0LjA2bC00MS45IDQxLjlzLS4wNi4wOS0uMDYuMTR2NTkuMjZjMCAuMDUuMDIuMS4wNi4xNGwxOS41MyAxOS41My05LjcxLTQ1LjA1Yy0uMDQtLjE5LjItLjMyLjM0LS4xOGw1Ny43NyA1Ny43N2MuMTQuMTQuMDEuMzgtLjE4LjM0bC00NS4wNS05LjcxIDE5LjIxIDE5LjIxcy4wOS4wNi4xNC4wNmg1OS4yNmMuMDUgMCAuMS0uMDIuMTQtLjA2bDE5LjI0LTE5LjI0LTQ1LjE0IDkuNzVjLS4xOS4wNC0uMzItLjItLjE4LS4zNGw1Ny43Ni01Ny43NmMuMTQtLjE0LjM4LS4wMS4zNC4xOGwtOS43NSA0NS4xNCAxOS42NC0xOS42NHMuMDYtLjA5LjA2LS4xNFY5OC4zNmMwLS4wNS0uMDItLjEtLjA2LS4xNFoiIHN0eWxlPSJmaWxsOiNmZmYiLz48L3N2Zz4=","幽靈":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGlkPSJnaG9zdF9zdmdfX0xheWVyXzEiIGRhdGEtbmFtZT0iTGF5ZXIgMSIgdmlld0JveD0iMCAwIDI1NiAyNTYiPjx0aXRsZT5naG9zdDwvdGl0bGU+PGRlZnM+PHN0eWxlPi5naG9zdF9zdmdfX2Nscy0ze2ZpbGw6Izc4NTI3OX08L3N0eWxlPjwvZGVmcz48Y2lyY2xlIGN4PSIxMjgiIGN5PSIxMjgiIHI9IjEyOCIgc3R5bGU9ImZpbGw6IzZmNDU3MCIvPjxwYXRoIGQ9Ik0xODEuMzIgMTI5LjE4YzE3LjUtMi4yNSAyNi45NCA0LjMxIDI5LjYzIDE5LjkyLjM1IDIuMDIuODkgNC4wOS0uOTUgNS41MS0xLjgyIDEuNC0zLjk3LjktNS40OS0uNTMtMy40My0zLjIxLTYuMTUtMi44NS05LjIzLjY1LTExLjQzIDEzLjAzLTExLjQ5IDEyLjk3LTI1LjYxIDMuNjctNy4yMyA5LjMtMTMuNCAxOS41My0yMi4xNiAyNy43Ni0xNS4yNCAxNC4zMi0yMy45MyAxNC4zNi0zOS4xNC0uMTItOC41LTguMS0xNC44NS0xNy44MS0yMS44Ni0yNy42LTEuMzQuNjEtMi42My45Mi0zLjU3IDEuNjctMTEuMDggOC45NS0xMi41MSA4Ljg2LTIwLjczLTMuMDItMy4wMS00LjM0LTUuNjEtNy43LTEwLjg5LTIuOS0xLjU1IDEuNDEtMy43IDEuNzktNS40Ni4yNy0xLjc3LTEuNTMtMS4xMS0zLjU2LS43My01LjU2IDIuOTEtMTUuNTMgMTEuNi0yMS41NiAyOS44OC0xOS45NS0xLjU2LTIxLjYxIDMuNjUtNDAuNzkgMjEuMDQtNTUuMTMgMTAuMi04LjQgMjEuODgtMTIuMzMgMzUuMDgtMTEuNjIgMzAuMDkgMS42IDQ4Ljg0IDI2LjM2IDUwLjIgNjYuOThaIiBzdHlsZT0iZmlsbDojZmZmIi8+PHBhdGggZD0iTTk3LjIgMTAwLjA1Yy0uMDUtMy43Ni4xLTcuNzIgNC4yLTkuMjUgNC4xLTEuNTQgNi45NCAxLjM5IDkuMzYgNC4xNiA1LjAzIDUuNzYgNy41MyAxMi42MSA2LjU5IDIwLjItLjg1IDYuODYtNS45OCA4LjYxLTExLjMzIDQuMTUtNS45Ny00Ljk4LTguNjYtMTEuNTYtOC44Mi0xOS4yNVoiIGNsYXNzPSJnaG9zdF9zdmdfX2Nscy0zIi8+PHBhdGggZD0iTTE1OC43NyAxMDAuNmMtLjI2IDcuMzEtMi45NiAxMy40Ny04LjQyIDE4LjQ2LTIuMSAxLjkyLTQuMzIgMy4zLTcuMTIgMi41LTMuMzMtLjk2LTQuNTMtMy44Ni00LjcxLTYuOTQtLjQyLTcuMjQgMS42OS0xMy44MiA2LjQzLTE5LjMzIDIuNTktMy4wMiA1LjYyLTYuMzcgMTAuMTQtNC4yNyAzLjg5IDEuODEgMy44IDUuODYgMy42OSA5LjU5WiIgY2xhc3M9Imdob3N0X3N2Z19fY2xzLTMiLz48L3N2Zz4=","龍":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGlkPSJkcmFnb25fc3ZnX19MYXllcl8xIiBkYXRhLW5hbWU9IkxheWVyIDEiIHZpZXdCb3g9IjAgMCAyNTYgMjU2Ij48dGl0bGU+ZHJhZ29uPC90aXRsZT48ZGVmcz48c3R5bGU+LmRyYWdvbl9zdmdfX2Nscy0xe2ZpbGw6I2ZmZn0uZHJhZ29uX3N2Z19fY2xzLTJ7ZmlsbDojNTc2ZmJjfTwvc3R5bGU+PC9kZWZzPjxjaXJjbGUgY3g9IjEyOCIgY3k9IjEyOCIgcj0iMTI4IiBjbGFzcz0iZHJhZ29uX3N2Z19fY2xzLTIiLz48cGF0aCBkPSJNMTcwLjkzIDEyNC40MWMuOCAxNS4yMS01LjA1IDI4LjA3LTE0Ljk2IDM4Ljk1LTQuODYgNS4zNC03LjEzIDEwLjgyLTcuMDEgMTcuODUuMDcgNC4zLS42NCA4LjYzLTEuMjEgMTIuOTEtMS40OCAxMS4xNy03Ljk3IDE2LjU1LTE5Ljc5IDE2LjUzLTExLjgxLS4wMi0xOC4yLTUuMzgtMTkuNzUtMTYuNTktLjE4LTEuMzItLjQzLTIuNjUtLjQyLTMuOTcuMDctMTIuMzEtMy4zNy0yMi42OC0xMS45My0zMi40My0xNC4yNS0xNi4yMi0xNC41Ni00NS4zLTIuNjYtNjAuNDkgNS44Mi03LjQyIDQuNjUtMTcuMTQgNy41NS0yNS41OCAyLjM3LTYuOSA0LjAyLTE0LjA1IDYuMDctMjEuMDYuNDgtMS42NSAxLjUxLTMuMDYgMy40OC0zIDIuMDIuMDYgMi43MSAxLjYgMy4xMSAzLjMgMS44IDcuNzcgNC4wNSAxNS40NyA1LjIzIDIzLjMzLjk1IDYuMzEgNC45NCA1Ljk1IDkuMzkgNS45NyA0LjUuMDIgOC40Mi4yNSA5LjM1LTYuMDMgMS4xMS03LjUzIDMuMzItMTQuOSA1LjAzLTIyLjM0LjQ1LTEuOTYuNzQtNC4xOSAzLjM0LTQuMTkgMi40MyAwIDMuMTUgMS45OSAzLjcxIDQgMS44OCA2LjcyIDMuODggMTMuNCA1LjcgMjAuMTQgMy4wMSAxMS4xMyA0LjIyIDIyLjc0IDExLjU5IDMyLjUxIDQuMzEgNS43MSAzLjk4IDEzLjIyIDQuMTggMjAuMjFaIiBjbGFzcz0iZHJhZ29uX3N2Z19fY2xzLTEiLz48cGF0aCBkPSJNMTk0LjIgOTUuOTNjMTYuNzggMTcuMzcgMTguODcgNjQuNTMtOC4yMiA4NS40OS01LjgzLTYuMzUtOC40NC0xNC43Ny0xMy41Mi0yMS41OC0uNjUtLjg3LS43NC0yLjg4LS4xOC0zLjgyIDUuNDEtOSA0Ljk1LTIwLjQ2IDEyLjk2LTI4LjU0IDcuODQtNy45MiA5LjM5LTE4LjYxIDguOTctMzEuNTVaIiBjbGFzcz0iZHJhZ29uX3N2Z19fY2xzLTEiLz48cGF0aCBkPSJNMTQxLjQ3IDE1My45NWM2LjYxLTEwLjcgMTIuMzItMTkuOTMgMTguNjItMzAuMTIgNS43NiAxOC4zOS0uMzQgMjguOC0xOC42MiAzMC4xMiIgY2xhc3M9ImRyYWdvbl9zdmdfX2Nscy0yIi8+PHBhdGggZD0iTTYxLjY4IDk1LjkzYy0xNi43OCAxNy4zNy0xOC44NyA2NC41MyA4LjIyIDg1LjQ5IDUuODMtNi4zNSA4LjQ0LTE0Ljc3IDEzLjUyLTIxLjU4LjY1LS44Ny43NC0yLjg4LjE4LTMuODItNS40MS05LTQuOTUtMjAuNDYtMTIuOTYtMjguNTQtNy44NC03LjkyLTkuMzktMTguNjEtOC45Ny0zMS41NVoiIGNsYXNzPSJkcmFnb25fc3ZnX19jbHMtMSIvPjxwYXRoIGQ9Ik0xMTUuNDYgMTUzLjk1Yy02LjYxLTEwLjctMTIuMzItMTkuOTMtMTguNjItMzAuMTItNS43NiAxOC4zOS4zNCAyOC44IDE4LjYyIDMwLjEyIiBjbGFzcz0iZHJhZ29uX3N2Z19fY2xzLTIiLz48L3N2Zz4=","惡":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGlkPSJkYXJrX3N2Z19fTGF5ZXJfMSIgZGF0YS1uYW1lPSJMYXllciAxIiB2aWV3Qm94PSIwIDAgMjU2IDI1NiI+PHRpdGxlPmRhcms8L3RpdGxlPjxkZWZzPjxzdHlsZT4uZGFya19zdmdfX2Nscy0xe2ZpbGw6I2ZmZn08L3N0eWxlPjwvZGVmcz48Y2lyY2xlIGN4PSIxMjgiIGN5PSIxMjgiIHI9IjEyOCIgc3R5bGU9ImZpbGw6IzRmNDc0NyIvPjxwYXRoIGQ9Ik03NC40NiA4NC4yNGM3LjQ5IDcuNTYgMTcuNzUgMTQuOTUgMjcuMDQgMTYuOTMtMS4zOCAyLjg0LTEuODggNS4wNy0yLjM3IDguMjMtMi43OCAxNy44Mi0xLjE5IDM0LjYzIDEyLjE1IDQ4LjMgMTAuMDYgMTAuMzEgMjMuNDUgMTAuMjggMzMuNTEtLjA5IDEzLjI5LTEzLjcxIDE0LjkxLTMwLjUxIDEyLjAxLTQ4LjMzLS40My0yLjYyLTEuOTMtOS4xNS0xLjg4LTkuMjQuMS0uMTggMC0uMDggMS0uMzggNi40OC0xLjUxIDE4LjYyLTcuOTkgMjYuMDUtMTUuNSAxNS4zNiAxMS44OCAyMy42NSAzNi45MSAxNC4xOCA1Ni44NS0xMi45NCAyNy4yNC00My4xNiA1MS43Ni04MS40MyA0My45Ni0yOS4xNS01Ljk0LTQ5LjA0LTI0LjQ5LTU3Ljk1LTUzLjIxLTQuMTQtMTMuMzMgMS42Ny0zNS45OCAxNy43LTQ3LjUyWiIgY2xhc3M9ImRhcmtfc3ZnX19jbHMtMSIvPjxwYXRoIGQ9Ik0xMzkuOTIgMTI0LjM4Yy0uMjcgNS4zLS43OSAxMi42MS02LjA1IDE4LjQ1LTQuMTIgNC41Ny03Ljk2IDQuODMtMTEuNjYtLjAzLTcuNDMtOS43NS03LjQ2LTIwLjg5LTQuNDgtMzIuMTkgMS45Ni03LjQyIDIuODYtNy45IDEwLjI2LTcuOSA3LjQxIDAgNy45Ny41OCAxMC4zOCA3Ljg1IDEuMjggMy44OCAxLjU4IDcuNzggMS41NiAxMy44M1oiIGNsYXNzPSJkYXJrX3N2Z19fY2xzLTEiLz48L3N2Zz4=","鋼":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGlkPSJzdGVlbF9zdmdfX0xheWVyXzEiIGRhdGEtbmFtZT0iTGF5ZXIgMSIgdmlld0JveD0iMCAwIDI1NiAyNTYiPjx0aXRsZT5zdGVlbDwvdGl0bGU+PGRlZnM+PHN0eWxlPi5zdGVlbF9zdmdfX2Nscy0xe2ZpbGw6I2ZmZn0uc3RlZWxfc3ZnX19jbHMtMntmaWxsOiM3N2IyY2J9PC9zdHlsZT48L2RlZnM+PGNpcmNsZSBjeD0iMTI4IiBjeT0iMTI4IiByPSIxMjgiIHN0eWxlPSJmaWxsOiM3NGIwY2IiLz48cGF0aCBkPSJNMTE3LjI0IDkzLjIyYzIuNiAxMy40MSA0Ljc4IDI0LjY2IDcuMjYgMzcuNDMtMjIuNzMgNi40OS00NC42OCAxMi43NS02OS42OCAxOS44OCA5Ljg0LTMwLjM1IDE4LjY2LTU3LjUyIDI3LjU5LTg1LjA1aDg5LjRjLjk1IDIuMDEgMi4xMyA0LjQ5IDMuODQgOC4wOS0xOS42NCA2LjYxLTM4LjI3IDEyLjg4LTU4LjQxIDE5LjY1IiBjbGFzcz0ic3RlZWxfc3ZnX19jbHMtMSIvPjxwYXRoIGQ9Ik0yMDAuOCAxNTAuNTMgMTU2IDE4Mi44OWMtNy43NS0yNy41Mi0xNC44Mi01Mi42My0yMi4zOC03OS41IDE2LjUtNS4yNiAzMC43OC05LjgyIDQ2LjgtMTQuOTMgNi45NiAyMS4yMSAxMy41IDQxLjEyIDIwLjM4IDYyLjA3IiBjbGFzcz0ic3RlZWxfc3ZnX19jbHMtMSIvPjxwYXRoIGQ9Ik0xNDMuNDcgMTkxLjU5Yy01LjIyIDMuOTgtMTAuMDYgNy42OC0xNS43NyAxMi4wMy0xOS43MS0xNC4zNy0zOC44NC0yOC4zMi02MS4xOS00NC42MSAyMi4xNy02LjQxIDQwLjg5LTExLjgyIDYxLjEyLTE3LjY2IDUuNDYgMTcuMzIgMTAuNDggMzMuMjIgMTUuODUgNTAuMjRaIiBjbGFzcz0ic3RlZWxfc3ZnX19jbHMtMSIvPjxjaXJjbGUgY3g9Ijk3LjA1IiBjeT0iODAuODEiIHI9IjcuNjQiIGNsYXNzPSJzdGVlbF9zdmdfX2Nscy0yIi8+PGNpcmNsZSBjeD0iMTYxLjY3IiBjeT0iMTE2Ljk1IiByPSIxMC40MSIgY2xhc3M9InN0ZWVsX3N2Z19fY2xzLTIiLz48L3N2Zz4=","妖精":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGRhdGEtbmFtZT0iTGF5ZXIgMSIgdmlld0JveD0iMCAwIDI1NiAyNTYiPjx0aXRsZT5mYWlyeTwvdGl0bGU+PGNpcmNsZSBjeD0iMTI4IiBjeT0iMTI4IiByPSIxMjgiIHN0eWxlPSJmaWxsOiNlMThjZTEiLz48cGF0aCBkPSJNMTY4LjU0IDEzMi42MWMzLjc3IDYuNzQgNy43MiAxMi41NSA5LjE3IDE5LjUgMi4yMiAxMC42Mi0xLjIxIDE0LjgtMTEuOTUgMTUuNzQtNy4xNS42My0xMC4yMy41OC0yMy45OS02LjMtLjcyIDEyLjY4IDEwLjQyIDI2LjU0IDcuNTYgNDAuMTMtLjMgMS40Mi0yLjExIDEuODgtMy4xLjgxLTEwLjcyLTExLjU3LTExLjQyLTI2Ljk2LTE4LjIzLTQwLjUzLTYuNTkgMTMuNDUtNy43MyAyOC42NS0xNy45OCA0MC43MS0uOTQgMS4xLTIuNzcuNzEtMy4xMS0uNy0zLjMxLTEzLjYyIDcuOTMtMjYuODIgNy42OC0zOS4zOS00LjgyIDMuOTYtMTYgNS43Ny0yMi43NCA1LjM0LTEyLjU5LS44LTE1Ljk3LTUtMTMuMi0xNy4xNyAxLjUtNi42MiA1Ljk3LTExLjcxIDguNTctMTguMy03Ljk3LTUuMTQtMTYuMDQtOS40LTIxLjY2LTE3LjM5LTEwLjQtMTQuNzYtMTAuODgtMzEuMDgtOS4xNy00Ny43Ny42Ny02LjU2IDYuNTYtOC44MiAxMi42OC05IDIyLjQzLS42NSA0Mi4zMSA0LjU2IDU1LjYzIDI0LjYxcS42OSAxLjA0IDMuMTEgNS4zNSAyLjQ2LTMuNzUgMy4xOC00Ljg2YzEzLjEyLTIwLjE2IDMyLjg5LTI1Ljc2IDU1LjM3LTI1LjEgOS44NC4yOSAxMy4yNyA0LjM1IDEzLjg2IDE0LjM2Ljk5IDE2LjcyLTEuMzggMzIuMjktMTIuMzkgNDUuOTMtNS4wNSA2LjI1LTEyLjIyIDguOTgtMTkuMjggMTQuMDJaIiBzdHlsZT0iZmlsbDojZmZmIi8+PHBhdGggZD0iTTEyOC4wMSA5Ny4zOGMzLjQzIDEwLjQ5IDExLjk5IDE4LjgzIDIzLjc1IDE4Ljg5LTQuMSAxMC43Mi0xMi4xOSAxNC4xLTIxLjIgMTQuOTEtMTAuODkuOTgtMjAuMDktMi44LTI2Ljc0LTE0LjAyIDExLjAyLTEuNTYgMjAuMDQtOC45NSAyNC4xOC0xOS43OVoiIHN0eWxlPSJmaWxsOiNlMjkxZTIiLz48L3N2Zz4="};
+
+const CHART = {
+  "一般": {half:["岩石","鋼"], zero:["幽靈"]},
+  "火": {double:["草","冰","蟲","鋼"], half:["火","水","岩石","龍"]},
+  "水": {double:["火","地面","岩石"], half:["水","草","龍"]},
+  "電": {double:["水","飛行"], half:["電","草","龍"], zero:["地面"]},
+  "草": {double:["水","地面","岩石"], half:["火","草","毒","飛行","蟲","龍","鋼"]},
+  "冰": {double:["草","地面","飛行","龍"], half:["火","水","冰","鋼"]},
+  "格鬥": {double:["一般","冰","岩石","惡","鋼"], half:["毒","飛行","超能力","蟲","妖精"], zero:["幽靈"]},
+  "毒": {double:["草","妖精"], half:["毒","地面","岩石","幽靈"], zero:["鋼"]},
+  "地面": {double:["火","電","毒","岩石","鋼"], half:["草","蟲"], zero:["飛行"]},
+  "飛行": {double:["草","格鬥","蟲"], half:["電","岩石","鋼"]},
+  "超能力": {double:["格鬥","毒"], half:["超能力","鋼"], zero:["惡"]},
+  "蟲": {double:["草","超能力","惡"], half:["火","格鬥","毒","飛行","幽靈","鋼","妖精"]},
+  "岩石": {double:["火","冰","飛行","蟲"], half:["格鬥","地面","鋼"]},
+  "幽靈": {double:["超能力","幽靈"], half:["惡"], zero:["一般"]},
+  "龍": {double:["龍"], half:["鋼"], zero:["妖精"]},
+  "惡": {double:["超能力","幽靈"], half:["格鬥","惡","妖精"]},
+  "鋼": {double:["冰","岩石","妖精"], half:["火","水","電","鋼"]},
+  "妖精": {double:["格鬥","龍","惡"], half:["火","毒","鋼"]}
+};
+
+const STORE_KEY = "pokemonTypeTrainerV2";
+
+let state = loadState();
+
+let mainMode = "memory";
+let quizMode = "single";
+let memoryMode = "attack";
+let memoryDefenseTypeMode = "single";
+let currentQuiz = null;
+let quizAnswered = false;
+let currentMemoryTypes = [];
+let memorySelected = new Set();
+let memoryRevealed = false;
+let chartType = "一般";
+
+const mainModeButtons = [...document.querySelectorAll("#mainModeSeg button")];
+const quizModeButtons = [...document.querySelectorAll("[data-quiz]")];
+const memoryModeButtons = [...document.querySelectorAll("[data-memory]")];
+const memoryTypeButtons = [...document.querySelectorAll("[data-memory-type]")];
+
+const els = {
+  quizCard: document.getElementById("quizCard"),
+  memoryCard: document.getElementById("memoryCard"),
+  reviewEmpty: document.getElementById("reviewEmpty"),
+  quizBody: document.getElementById("quizBody"),
+  attackPill: document.getElementById("attackPill"),
+  def1Pill: document.getElementById("def1Pill"),
+  def2Pill: document.getElementById("def2Pill"),
+  plusSign: document.getElementById("plusSign"),
+  choices: document.getElementById("choices"),
+  quizFeedback: document.getElementById("quizFeedback"),
+  nextQuizBtn: document.getElementById("nextQuizBtn"),
+  quizHint: document.getElementById("quizHint"),
+  statsTitle: document.getElementById("statsTitle"),
+  statCorrect: document.getElementById("statCorrect"),
+  statTotal: document.getElementById("statTotal"),
+  statStreak: document.getElementById("statStreak"),
+  stat4Label: document.getElementById("stat4Label"),
+  stat4Value: document.getElementById("stat4Value"),
+  memoryTitle: document.getElementById("memoryTitle"),
+  focusTypePill: document.getElementById("focusTypePill"),
+  focusTypePill2: document.getElementById("focusTypePill2"),
+  memoryPlusSign: document.getElementById("memoryPlusSign"),
+  memoryTypeGroup: document.getElementById("memoryTypeGroup"),
+  memoryPrompt: document.getElementById("memoryPrompt"),
+  memoryGrid: document.getElementById("memoryGrid"),
+  memoryFeedback: document.getElementById("memoryFeedback"),
+  nextMemoryBtn: document.getElementById("nextMemoryBtn"),
+  revealBtn: document.getElementById("revealBtn"),
+  chartCard: document.getElementById("chartCard"),
+  chartTypeGrid: document.getElementById("chartTypeGrid"),
+  chartFocusPill: document.getElementById("chartFocusPill"),
+  chartAttackGroups: document.getElementById("chartAttackGroups"),
+  chartDefenseGroups: document.getElementById("chartDefenseGroups"),
+  typeMatrix: document.getElementById("typeMatrix"),
+  dashboardGrid: document.getElementById("dashboardGrid"),
+  quizLegend: document.getElementById("quizLegend"),
+  memoryLegend: document.getElementById("memoryLegend"),
+  toolNote: document.getElementById("toolNote")
+};
+
+function applyLanguage(){
+  document.documentElement.lang = currentLang;
+  document.title = tr("appTitle");
+  const appleTitle = document.getElementById("appleAppTitle");
+  if (appleTitle) appleTitle.setAttribute("content", tr("appTitle"));
+
+  document.querySelectorAll("[data-i18n]").forEach(el => {
+    const value = tr(el.dataset.i18n);
+    if (typeof value === "string") el.textContent = value;
+  });
+
+  document.querySelectorAll(".lang-btn").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.lang === currentLang);
+  });
+
+  els.quizLegend.innerHTML = tr("quizLegend");
+  els.memoryLegend.innerHTML = tr("memoryLegend");
+  els.toolNote.innerHTML = tr("toolNote");
+
+  renderStats();
+
+  if (mainMode === "memory") startMemoryQuestion();
+  else if (mainMode === "chart") renderTypeChart();
+  else startQuizQuestion();
+}
+
+function switchLanguage(lang){
+  if (!I18N[lang]) return;
+  currentLang = lang;
+  localStorage.setItem(LANG_KEY, lang);
+  applyLanguage();
+}
+
+function loadState(){
+  try{
+    const raw = JSON.parse(localStorage.getItem(STORE_KEY) || "{}");
+    return {
+      quizStats: raw.quizStats || {correct:0,total:0,streak:0},
+      memoryStats: raw.memoryStats || {correct:0,total:0,streak:0},
+      wrongQuestions: Array.isArray(raw.wrongQuestions)
+        ? raw.wrongQuestions.map(q => ({...q, misses: Math.max(1, Number(q.misses) || 1)}))
+        : []
+    };
+  }catch(e){
+    return {
+      quizStats:{correct:0,total:0,streak:0},
+      memoryStats:{correct:0,total:0,streak:0},
+      wrongQuestions:[]
+    };
+  }
+}
+function saveState(){
+  localStorage.setItem(STORE_KEY, JSON.stringify(state));
+}
+function rand(arr){
+  return arr[Math.floor(Math.random()*arr.length)];
+}
+function formatMult(n){
+  if (n === 0.25) return "¼×";
+  if (n === 0.5) return "½×";
+  return n + "×";
+}
+function eff(attack, defend){
+  const row = CHART[attack] || {};
+  if ((row.zero || []).includes(defend)) return 0;
+  if ((row.double || []).includes(defend)) return 2;
+  if ((row.half || []).includes(defend)) return 0.5;
+  return 1;
+}
+function renderTypePill(el, type){
+  el.innerHTML = `<img class="icon" src="${ICONS[type]}" alt="${typeName(type)} icon"><span>${typeName(type)}</span>`;
+  el.style.background = COLORS[type];
+}
+function renderMiniPill(type){
+  return `<span class="mini-pill" style="background:${COLORS[type]}"><img src="${ICONS[type]}" alt="${typeName(type)} icon"><span>${typeName(type)}</span></span>`;
+}
+function activateButtons(buttons, activeValue, attr){
+  buttons.forEach(btn => btn.classList.toggle("active", btn.dataset[attr] === activeValue));
+}
+function questionKey(q){
+  return `${q.mode}|${q.attack}|${q.def1}|${q.def2 || ""}`;
+}
+function sameQuestion(a,b){
+  return questionKey(a) === questionKey(b);
+}
+function addWrongQuestion(q){
+  const existing = state.wrongQuestions.find(item => sameQuestion(item, q));
+  if (existing){
+    existing.misses = Math.max(1, Number(existing.misses) || 1) + 1;
+  } else {
+    state.wrongQuestions.push({
+      mode:q.mode,
+      attack:q.attack,
+      def1:q.def1,
+      def2:q.def2 || null,
+      misses:1
+    });
+  }
+  saveState();
+}
+function removeWrongQuestion(q){
+  const before = state.wrongQuestions.length;
+  state.wrongQuestions = state.wrongQuestions.filter(item => !sameQuestion(item, q));
+  if (state.wrongQuestions.length !== before) saveState();
+}
+
+function weightedWrongPick(pool){
+  if (!pool.length) return null;
+  const weights = pool.map(q => Math.max(1, Number(q.misses) || 1));
+  const total = weights.reduce((a,b) => a + b, 0);
+  let roll = Math.random() * total;
+  for (let i = 0; i < pool.length; i++){
+    roll -= weights[i];
+    if (roll <= 0) return pool[i];
+  }
+  return pool[pool.length - 1];
+}
+
+function hydrateQuestion(raw){
+  if (!raw) return null;
+  if (raw.mode === "single"){
+    return {
+      mode:"single",
+      attack:raw.attack,
+      def1:raw.def1,
+      result:eff(raw.attack, raw.def1),
+      weighted:true,
+      misses:Math.max(1, Number(raw.misses) || 1)
+    };
+  }
+  const e1 = eff(raw.attack, raw.def1);
+  const e2 = eff(raw.attack, raw.def2);
+  return {
+    mode:"dual",
+    attack:raw.attack,
+    def1:raw.def1,
+    def2:raw.def2,
+    e1,
+    e2,
+    result:e1*e2,
+    weighted:true,
+    misses:Math.max(1, Number(raw.misses) || 1)
+  };
+}
+
+function renderStats(){
+  if (mainMode === "chart"){
+    return;
+  }
+  if (mainMode === "memory"){
+    const s = state.memoryStats;
+    els.statsTitle.textContent = tr("memoryStats");
+    els.statCorrect.textContent = s.correct;
+    els.statTotal.textContent = s.total;
+    els.statStreak.textContent = s.streak;
+    els.stat4Label.textContent = tr("statAccuracy");
+    els.stat4Value.textContent = s.total ? Math.round((s.correct / s.total) * 100) + "%" : "—";
+  }else{
+    const s = state.quizStats;
+    els.statsTitle.textContent = mainMode === "review" ? tr("reviewStats") : tr("quizStats");
+    els.statCorrect.textContent = s.correct;
+    els.statTotal.textContent = s.total;
+    els.statStreak.textContent = s.streak;
+    els.stat4Label.textContent = tr("statWrong");
+    els.stat4Value.textContent = state.wrongQuestions.length;
+  }
+}
+
+function switchMainMode(mode){
+  mainMode = mode;
+  activateButtons(mainModeButtons, mainMode, "main");
+
+  els.quizCard.classList.toggle("hidden", mode === "memory" || mode === "chart");
+  els.memoryCard.classList.toggle("hidden", mode !== "memory");
+  els.chartCard.classList.toggle("hidden", mode !== "chart");
+  els.dashboardGrid.classList.toggle("hidden", mode === "chart");
+
+  renderStats();
+
+  if (mode === "memory"){
+    startMemoryQuestion();
+  } else if (mode === "chart"){
+    renderTypeChart();
+  } else {
+    startQuizQuestion();
+  }
+}
+function switchQuizMode(mode){
+  quizMode = mode;
+  activateButtons(quizModeButtons, quizMode, "quiz");
+  if (mainMode !== "memory"){
+    startQuizQuestion();
+  }
+}
+function switchMemoryMode(mode){
+  memoryMode = mode;
+  activateButtons(memoryModeButtons, memoryMode, "memory");
+  els.memoryTypeGroup.classList.toggle("hidden", memoryMode !== "defense");
+  if (mainMode === "memory"){
+    startMemoryQuestion();
+  }
+}
+
+function switchMemoryTypeMode(mode){
+  memoryDefenseTypeMode = mode;
+  activateButtons(memoryTypeButtons, memoryDefenseTypeMode, "memoryType");
+  if (mainMode === "memory" && memoryMode === "defense"){
+    startMemoryQuestion();
+  }
+}
+
+function makeRandomQuizQuestion(){
+  const wrongPool = state.wrongQuestions.filter(q => q.mode === quizMode);
+
+  // 有錯題時：約 65% 機會優先抽錯題。
+  // 同一題答錯越多次，misses 越高，被抽中機率亦越高。
+  if (wrongPool.length && Math.random() < 0.65){
+    return hydrateQuestion(weightedWrongPick(wrongPool));
+  }
+
+  const attack = rand(TYPES);
+  const def1 = rand(TYPES);
+  if (quizMode === "single"){
+    return {mode:"single", attack, def1, result:eff(attack, def1), weighted:false};
+  } else {
+    let def2 = rand(TYPES);
+    while (def2 === def1) def2 = rand(TYPES);
+    const e1 = eff(attack, def1);
+    const e2 = eff(attack, def2);
+    return {mode:"dual", attack, def1, def2, e1, e2, result:e1*e2, weighted:false};
+  }
+}
+
+function makeReviewQuestion(){
+  const pool = state.wrongQuestions.filter(q => q.mode === quizMode);
+  if (!pool.length) return null;
+  return hydrateQuestion(weightedWrongPick(pool));
+}
+
+function startQuizQuestion(){
+  quizAnswered = false;
+  els.quizFeedback.className = "feedback";
+  els.quizFeedback.innerHTML = "";
+  els.nextQuizBtn.classList.add("hidden");
+
+  if (mainMode === "review"){
+    currentQuiz = makeReviewQuestion();
+    const hasQuestion = !!currentQuiz;
+    els.reviewEmpty.classList.toggle("hidden", hasQuestion);
+    els.quizBody.classList.toggle("hidden", !hasQuestion);
+    if (!hasQuestion){
+      renderStats();
+      return;
+    }
+    els.quizHint.textContent = tr("qHintReview");
+  } else {
+    els.reviewEmpty.classList.add("hidden");
+    els.quizBody.classList.remove("hidden");
+    currentQuiz = makeRandomQuizQuestion();
+    els.quizHint.textContent = currentQuiz.weighted
+      ? tr("weightedHint")(currentQuiz.misses)
+      : tr("qHint");
+  }
+
+  renderTypePill(els.attackPill, currentQuiz.attack);
+  renderTypePill(els.def1Pill, currentQuiz.def1);
+
+  if (currentQuiz.mode === "dual"){
+    els.plusSign.classList.remove("hidden");
+    els.def2Pill.classList.remove("hidden");
+    renderTypePill(els.def2Pill, currentQuiz.def2);
+  } else {
+    els.plusSign.classList.add("hidden");
+    els.def2Pill.classList.add("hidden");
+  }
+
+  renderQuizChoices();
+  renderStats();
+}
+
+function renderQuizChoices(){
+  els.choices.innerHTML = "";
+  const choices = currentQuiz.mode === "single"
+    ? [0, 0.5, 1, 2]
+    : [0, 0.25, 0.5, 1, 2, 4];
+
+  choices.forEach(value => {
+    const btn = document.createElement("button");
+    btn.className = "choice";
+    btn.textContent = formatMult(value);
+    btn.dataset.value = value;
+    btn.addEventListener("click", () => answerQuiz(value, btn));
+    els.choices.appendChild(btn);
+  });
+}
+
+function answerQuiz(value, btn){
+  if (quizAnswered) return;
+  quizAnswered = true;
+
+  const isCorrect = Number(value) === Number(currentQuiz.result);
+  const s = state.quizStats;
+  s.total += 1;
+  if (isCorrect){
+    s.correct += 1;
+    s.streak += 1;
+    removeWrongQuestion(currentQuiz);
+  } else {
+    s.streak = 0;
+    addWrongQuestion(currentQuiz);
+  }
+  saveState();
+
+  [...els.choices.children].forEach(choice => {
+    choice.disabled = true;
+    if (Number(choice.dataset.value) === Number(currentQuiz.result)){
+      choice.classList.add("correct");
+    }
+  });
+  if (!isCorrect) btn.classList.add("wrong");
+
+  let extra = "";
+  if (!isCorrect){
+    extra = mainMode === "review" ? `<br>${tr("keepWrong")}` : `<br>${tr("addedWrong")}`;
+  } else if (mainMode === "review"){
+    extra = `<br>${tr("removedWrong")}`;
+  }
+
+  const a = typeName(currentQuiz.attack);
+  const d1 = typeName(currentQuiz.def1);
+
+  if (currentQuiz.mode === "single"){
+    els.quizFeedback.innerHTML = isCorrect
+      ? `${tr("correct")} <b>${a}</b> → <b>${d1}</b> = <b>${formatMult(currentQuiz.result)}</b>${extra}`
+      : `${tr("answerIs")}: <b>${formatMult(currentQuiz.result)}</b> — <b>${a}</b> → <b>${d1}</b>${extra}`;
+  } else {
+    const d2 = typeName(currentQuiz.def2);
+    els.quizFeedback.innerHTML = isCorrect
+      ? `${tr("correct")} <b>${a}</b> → <b>${d1}</b> = ${formatMult(currentQuiz.e1)}, <b>${a}</b> → <b>${d2}</b> = ${formatMult(currentQuiz.e2)} → <b>${formatMult(currentQuiz.result)}</b>${extra}`
+      : `${tr("answerIs")}: <b>${formatMult(currentQuiz.result)}</b> — <b>${a}</b> → <b>${d1}</b> = ${formatMult(currentQuiz.e1)}, <b>${a}</b> → <b>${d2}</b> = ${formatMult(currentQuiz.e2)}${extra}`;
+  }
+
+  els.quizFeedback.className = "feedback show " + (isCorrect ? "good" : "bad");
+  els.nextQuizBtn.classList.remove("hidden");
+  renderStats();
+}
+
+function startMemoryQuestion(){
+  memorySelected = new Set();
+  memoryRevealed = false;
+
+  const first = rand(TYPES);
+  currentMemoryTypes = [first];
+
+  if (memoryMode === "defense" && memoryDefenseTypeMode === "dual"){
+    let second = rand(TYPES);
+    while (second === first) second = rand(TYPES);
+    currentMemoryTypes.push(second);
+  }
+
+  els.memoryFeedback.className = "feedback";
+  els.memoryFeedback.innerHTML = "";
+  els.nextMemoryBtn.classList.add("hidden");
+  els.revealBtn.classList.remove("hidden");
+
+  renderStats();
+  renderTypePill(els.focusTypePill, currentMemoryTypes[0]);
+
+  const isDualDefense = memoryMode === "defense" && currentMemoryTypes.length === 2;
+  els.memoryPlusSign.classList.toggle("hidden", !isDualDefense);
+  els.focusTypePill2.classList.toggle("hidden", !isDualDefense);
+  if (isDualDefense){
+    renderTypePill(els.focusTypePill2, currentMemoryTypes[1]);
+  }
+
+  if (memoryMode === "attack"){
+    els.memoryTitle.textContent = tr("memoryAttackTitle");
+    els.memoryPrompt.textContent = tr("memoryAttackPrompt")(typeName(currentMemoryTypes[0]));
+  } else if (isDualDefense){
+    const [t1, t2] = currentMemoryTypes;
+    els.memoryTitle.textContent = tr("memoryDefenseDualTitle");
+    els.memoryPrompt.textContent = tr("memoryDefenseDualPrompt")(typeName(t1), typeName(t2));
+  } else {
+    els.memoryTitle.textContent = tr("memoryDefenseSingleTitle");
+    els.memoryPrompt.textContent = tr("memoryDefenseSinglePrompt")(typeName(currentMemoryTypes[0]));
+  }
+
+  renderMemoryGrid();
+}
+
+function renderMemoryGrid(){
+  els.memoryGrid.innerHTML = "";
+  TYPES.forEach(type => {
+    const btn = document.createElement("button");
+    btn.className = "type-card";
+    btn.innerHTML = `<span class="badge"><img src="${ICONS[type]}" alt="${typeName(type)} icon"></span><span>${typeName(type)}</span>`;
+    btn.dataset.type = type;
+
+    if (memorySelected.has(type)) btn.classList.add("selected");
+
+    if (memoryRevealed){
+      const answers = getMemoryAnswers();
+      const isAnswer = answers.includes(type);
+      const isSelected = memorySelected.has(type);
+      if (isAnswer && isSelected) btn.classList.add("correct");
+      if (!isAnswer && isSelected) btn.classList.add("wrong");
+      if (isAnswer && !isSelected) btn.classList.add("missed");
+    } else {
+      btn.addEventListener("click", () => {
+        if (memorySelected.has(type)) memorySelected.delete(type);
+        else memorySelected.add(type);
+        renderMemoryGrid();
+      });
+    }
+
+    els.memoryGrid.appendChild(btn);
+  });
+}
+
+function getMemoryEffectiveness(type){
+  if (memoryMode === "attack"){
+    return eff(currentMemoryTypes[0], type);
+  }
+  return currentMemoryTypes.reduce((mult, defender) => mult * eff(type, defender), 1);
+}
+
+function getMemoryAnswers(){
+  if (memoryMode === "attack"){
+    return TYPES.filter(defender => getMemoryEffectiveness(defender) === 2);
+  }
+  return TYPES.filter(attacker => getMemoryEffectiveness(attacker) > 1);
+}
+
+function revealMemory(){
+  if (memoryRevealed) return;
+  memoryRevealed = true;
+  const answers = getMemoryAnswers();
+  const selectedSorted = TYPES.filter(t => memorySelected.has(t));
+  const correctSet = new Set(answers);
+
+  let ok = true;
+  if (selectedSorted.length !== answers.length) ok = false;
+  for (const t of selectedSorted){
+    if (!correctSet.has(t)) ok = false;
+  }
+
+  const s = state.memoryStats;
+  s.total += 1;
+  if (ok){
+    s.correct += 1;
+    s.streak += 1;
+  } else {
+    s.streak = 0;
+  }
+  saveState();
+
+  renderMemoryGrid();
+
+  const selectedPills = selectedSorted.length
+    ? selectedSorted.map(renderMiniPill).join("")
+    : tr("noSelection");
+
+  const heading = ok ? tr("correct") : tr("notFullyCorrect");
+  let desc = "";
+  let answerHTML = "";
+
+  if (memoryMode === "attack"){
+    desc = tr("memoryAttackDesc")(typeName(currentMemoryTypes[0]));
+    answerHTML = `<div class="answer-summary">${answers.map(renderMiniPill).join("")}</div>`;
+  } else if (currentMemoryTypes.length === 2){
+    const [t1, t2] = currentMemoryTypes;
+    const fourX = answers.filter(type => getMemoryEffectiveness(type) === 4);
+    const twoX = answers.filter(type => getMemoryEffectiveness(type) === 2);
+    desc = tr("memoryDefenseDualDesc")(typeName(t1), typeName(t2));
+    answerHTML = `
+      ${fourX.length ? `<div class="mult-group"><b>${tr("weakness4")}</b><div class="answer-summary">${fourX.map(renderMiniPill).join("")}</div></div>` : ""}
+      ${twoX.length ? `<div class="mult-group"><b>${tr("weakness2")}</b><div class="answer-summary">${twoX.map(renderMiniPill).join("")}</div></div>` : ""}
+      ${!answers.length ? `<div class="answer-summary">${tr("noWeakness")}</div>` : ""}
+    `;
+  } else {
+    desc = tr("memoryDefenseSingleDesc")(typeName(currentMemoryTypes[0]));
+    answerHTML = `<div class="answer-summary">${answers.map(renderMiniPill).join("")}</div>`;
+  }
+
+  els.memoryFeedback.innerHTML = `
+    <div><b>${heading}</b></div>
+    <div style="margin-top:6px">${desc}</div>
+    ${answerHTML}
+    <div style="margin-top:12px;color:#b9c7dc">${tr("yourChoice")}</div>
+    <div class="answer-summary">${selectedPills}</div>
+  `;
+  els.memoryFeedback.className = "feedback show " + (ok ? "good" : "bad");
+  els.nextMemoryBtn.classList.remove("hidden");
+  els.revealBtn.classList.add("hidden");
+  renderStats();
+}
+
+
+
+function chartEffectChip(type){
+  return `<span class="effect-chip" style="background:${COLORS[type]}"><img src="${ICONS[type]}" alt="${typeName(type)} icon"><span>${typeName(type)}</span></span>`;
+}
+
+function renderEffectRows(groups){
+  const rows = [
+    {key:"double", label:"2×", cls:"x2"},
+    {key:"half", label:"½×", cls:"xhalf"},
+    {key:"zero", label:"0×", cls:"x0"}
+  ];
+
+  return rows.map(row => {
+    const list = groups[row.key] || [];
+    return `
+      <div class="effect-row">
+        <div class="effect-badge ${row.cls}">${row.label}</div>
+        <div class="effect-types">
+          ${list.length ? list.map(chartEffectChip).join("") : `<span class="effect-none">${tr("none")}</span>`}
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+function getAttackChartGroups(type){
+  const row = CHART[type] || {};
+  return {
+    double:[...(row.double || [])],
+    half:[...(row.half || [])],
+    zero:[...(row.zero || [])]
+  };
+}
+
+function getDefenseChartGroups(type){
+  return {
+    double:TYPES.filter(attacker => eff(attacker, type) === 2),
+    half:TYPES.filter(attacker => eff(attacker, type) === 0.5),
+    zero:TYPES.filter(attacker => eff(attacker, type) === 0)
+  };
+}
+
+function renderChartTypeGrid(){
+  els.chartTypeGrid.innerHTML = "";
+  TYPES.forEach(type => {
+    const btn = document.createElement("button");
+    btn.className = "chart-type-btn" + (type === chartType ? " active" : "");
+    btn.innerHTML = `<img src="${ICONS[type]}" alt="${typeName(type)} icon"><span>${typeName(type)}</span>`;
+    btn.addEventListener("click", () => {
+      chartType = type;
+      renderTypeChart();
+    });
+    els.chartTypeGrid.appendChild(btn);
+  });
+}
+
+function renderTypeChart(){
+  renderChartTypeGrid();
+  renderTypePill(els.chartFocusPill, chartType);
+  els.chartAttackGroups.innerHTML = renderEffectRows(getAttackChartGroups(chartType));
+  els.chartDefenseGroups.innerHTML = renderEffectRows(getDefenseChartGroups(chartType));
+  renderFullMatrix();
+}
+
+function matrixValue(mult){
+  if (mult === 2) return {text:"2", cls:"x2"};
+  if (mult === 0.5) return {text:"½", cls:"xhalf"};
+  if (mult === 0) return {text:"0", cls:"x0"};
+  return {text:"", cls:"x1"};
+}
+
+function renderFullMatrix(){
+  let out = `<thead><tr><th class="corner">${tr("matrixCorner")}</th>`;
+  for (const defender of TYPES){
+    out += `<th title="${tr("defender")}: ${typeName(defender)}"><img src="${ICONS[defender]}" alt="${typeName(defender)}"></th>`;
+  }
+  out += `</tr></thead><tbody>`;
+
+  for (const attacker of TYPES){
+    out += `<tr><th title="${tr("attacker")}: ${typeName(attacker)}"><img src="${ICONS[attacker]}" alt="${typeName(attacker)}"></th>`;
+    for (const defender of TYPES){
+      const mult = eff(attacker, defender);
+      const v = matrixValue(mult);
+      out += `<td class="${v.cls}" title="${typeName(attacker)} → ${typeName(defender)} = ${formatMult(mult)}">${v.text}</td>`;
+    }
+    out += `</tr>`;
+  }
+  out += `</tbody>`;
+  els.typeMatrix.innerHTML = out;
+}
+
+
+document.getElementById("resetQuizBtn").addEventListener("click", () => {
+  if (!confirm(tr("confirmReset"))) return;
+  state.quizStats = {correct:0,total:0,streak:0};
+  state.memoryStats = {correct:0,total:0,streak:0};
+  saveState();
+  renderStats();
+});
+
+document.getElementById("clearWrongBtn").addEventListener("click", () => {
+  if (!confirm(tr("confirmClearWrong"))) return;
+  state.wrongQuestions = [];
+  saveState();
+  renderStats();
+  if (mainMode === "review") startQuizQuestion();
+});
+
+document.querySelectorAll(".lang-btn").forEach(btn => {
+  btn.addEventListener("click", () => switchLanguage(btn.dataset.lang));
+});
+
+mainModeButtons.forEach(btn => btn.addEventListener("click", () => switchMainMode(btn.dataset.main)));
+quizModeButtons.forEach(btn => btn.addEventListener("click", () => switchQuizMode(btn.dataset.quiz)));
+memoryModeButtons.forEach(btn => btn.addEventListener("click", () => switchMemoryMode(btn.dataset.memory)));
+memoryTypeButtons.forEach(btn => btn.addEventListener("click", () => switchMemoryTypeMode(btn.dataset.memoryType)));
+
+els.nextQuizBtn.addEventListener("click", startQuizQuestion);
+els.revealBtn.addEventListener("click", revealMemory);
+els.nextMemoryBtn.addEventListener("click", startMemoryQuestion);
+
+document.addEventListener("keydown", (e) => {
+  if (mainMode === "chart") return;
+  if (mainMode !== "memory"){
+    const choiceCount = els.choices.children.length;
+    const num = Number(e.key);
+    if (!quizAnswered && num >= 1 && num <= choiceCount){
+      const btn = els.choices.children[num - 1];
+      if (btn) btn.click();
+    } else if (quizAnswered && (e.key === "Enter" || e.key === " ")){
+      e.preventDefault();
+      startQuizQuestion();
+    }
+  } else {
+    if (e.key === "Enter"){
+      e.preventDefault();
+      if (!memoryRevealed) revealMemory();
+      else startMemoryQuestion();
+    }
+  }
+});
+
+switchMemoryMode("attack");
+switchMainMode("memory");
+applyLanguage();
+</script>
+</body>
+</html>
