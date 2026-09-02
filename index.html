@@ -9,8 +9,13 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="屬性相剋訓練器" id="appleAppTitle">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23111827'/%3E%3Ccircle cx='50' cy='50' r='31' fill='none' stroke='%23f5b971' stroke-width='10'/%3E%3Cpath d='M18 50h64' stroke='%23f5b971' stroke-width='10'/%3E%3Ccircle cx='50' cy='50' r='10' fill='%23f5b971'/%3E%3C/svg%3E">
-<script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=tn1Q495Y8dye1SAq-ij5mNaTnGaSdJTentLzPoe4_fqmaZuoL9q9w74aRFYcu4tO0LGzYgw2o12TxgSajHIaezn4tPhG4DcVW7vfEnDmRBpO5IGOYI8bEKUzVYV43P_fnWXQcEtrKEMD0Tso5naW0ShyNvi_Hl5OEcfx___7pr0gSK9OZpg7p3DMABjzOZEz5DpqRJNfKLxiOSVFNpSHqdwBBWGJ-IoqBRmXmnQYue-f8c_ceMiJPTYhqDn3M_vYiKR__zd40s1ENJBPUOMgKOwbj1N3KY3uOvsQal7EKukQej4i3WOZsH35JI_S_-uV" charset="UTF-8"></script><style>
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+
+
+<style>
   :root{
     --bg:#111827;
     --bg2:#0f172a;
@@ -1560,11 +1565,20 @@ let currentLang = localStorage.getItem(LANG_KEY) || (() => {
 })();
 
 function tr(key){
-  return I18N[currentLang]?.[key] ?? I18N["zh-Hant"][key] ?? key;
+  if (I18N[currentLang] && Object.prototype.hasOwnProperty.call(I18N[currentLang], key)) {
+    return I18N[currentLang][key];
+  }
+  if (I18N["zh-Hant"] && Object.prototype.hasOwnProperty.call(I18N["zh-Hant"], key)) {
+    return I18N["zh-Hant"][key];
+  }
+  return key;
 }
 
 function typeName(type){
-  return TYPE_NAMES[currentLang]?.[type] || type;
+  if (TYPE_NAMES[currentLang] && Object.prototype.hasOwnProperty.call(TYPE_NAMES[currentLang], type)) {
+    return TYPE_NAMES[currentLang][type];
+  }
+  return type;
 }
 
 
